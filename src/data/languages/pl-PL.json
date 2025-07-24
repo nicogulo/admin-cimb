@@ -1,0 +1,28 @@
+{
+	"site": {
+		"title": "Admin Binaloka",
+		"desc": "Globalny lider w handlu FX i CFD, zapewniający dostęp do ponad 2100 rynków finansowych, w tym FX, indeksów, akcji, towarów i innych. Regulowany przez FCA, z siedzibą w Canary Wharf w Londynie."
+	},
+	"sidebar": {
+		"dashboard": "Panel",
+		"balance": "Saldo",
+		"balance:deposit": "Wpłata",
+		"balance:withdraw": "Wypłata",
+		"member": "Użytkownik",
+		"member:list": "Użytkownicy",
+		"member:kyc": "KYC",
+		"admin": "Administrator",
+		"accounts": "Accounts",
+		"logs": "Administrator Logi",
+		"table": "Tabela",
+		"error": "Błąd",
+		"error:403": "Brak Autoryzacji",
+		"error:404": "Nie Znaleziono",
+		"error:500": "Błąd Wewnętrzny Serwera"
+	},
+	"theme": {
+		"light": "jasny",
+		"dark": "ciemny",
+		"system": "systemowy"
+	}
+}

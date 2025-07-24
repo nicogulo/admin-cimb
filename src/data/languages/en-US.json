@@ -1,0 +1,28 @@
+{
+  "site": {
+    "title": "Admin Binaloka Indonesia",
+		"desc": "A global leader in FX and CFD trading, providing access to over 2100 financial markets including FX, indices, shares, commodities and more. Regulated by the FCA and headquartered in Canary Wharf, London."
+  },
+	"sidebar": {
+		"dashboard": "Dashboard",
+		"balance": "Balance",
+		"balance:deposit": "Deposit",
+		"balance:withdraw": "Withdraw",
+		"member": "User",
+		"member:list": "User Member",
+		"member:kyc": "User KYC",
+		"admin": "Admin",
+		"accounts": "Accounts",
+		"logs": "Admin Logs",
+		"table": "Table",
+		"error": "Error",
+		"error:403": "Not Authorized",
+		"error:404": "Not Found",
+		"error:500": "Internal Server Error"
+	},
+	"theme": {
+		"light": "light",
+		"dark": "dark",
+		"system": "system"
+	}
+}
