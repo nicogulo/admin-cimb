@@ -1,0 +1,21 @@
+{
+  "dashboard": "Dashboard",
+  "member": "Daftar Member",
+  "member_activity": "Aktivitas Member",
+  "member_kyc": "KYC Member",
+  "crypto": "Crypto",
+  "fiat": "Fiat",
+  "trade": "Trade",
+  "admin": "Admin",
+  "admin_activity": "Aktivitas Admin",
+  "logs": "Log",
+  "deposit": "Deposit",
+  "withdraw": "Penarikan",
+  "balance": "Saldo",
+  "logout": "Keluar",
+  "light": "Terang",
+  "dark": "Gelap",
+  "system": "Sistem",
+  "sign_in": "Masuk",
+  "welcome": "Selamat datang"
+}
