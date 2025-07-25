@@ -64,5 +64,6 @@
         "react": {
             "version": "detect"
         }
-    }
+    },
+    "local-rules/no-router-query-redirect": "error"
 }

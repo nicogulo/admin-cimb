@@ -8,22 +8,21 @@ import useAuth from "@hooks/useAuth"
 import { getAuth } from "@utils/auth"
 import { getRedirectHref } from "@utils/redirection"
 
-export const withAuthSSR =
-    (getServerSidePropsFunc: GetServerSideProps) => async (context: GetServerSidePropsContext) => {
-        const auth = getAuth({ req: context.req, res: context.res })
-        const url = getRedirectHref(context.resolvedUrl)
+export const withAuthSSR = (getServerSideProps: GetServerSideProps) => async (props: GetServerSidePropsContext) => {
+    const auth = getAuth({ req: props.req, res: props.res })
+    const url = getRedirectHref(props.resolvedUrl, props.locale)
 
-        if (!auth.isLoggedIn) {
-            return {
-                redirect: {
-                    destination: url,
-                    permanent: false
-                }
+    if (!auth.isLoggedIn) {
+        return {
+            redirect: {
+                destination: url,
+                permanent: false
             }
         }
-
-        return getServerSidePropsFunc(context)
     }
+
+    return getServerSideProps(props)
+}
 
 // eslint-disable-next-line react/function-component-definition
 export const withAuthClient = (WrappedComponent: React.ComponentType) => () => {
@@ -31,7 +30,7 @@ export const withAuthClient = (WrappedComponent: React.ComponentType) => () => {
     const { auth } = useAuth()
 
     useEffect(() => {
-        const url = getRedirectHref(router.asPath)
+        const url = getRedirectHref(router.asPath, router.locale)
         const authCookie = getAuth()
 
         if (!authCookie.isLoggedIn && !auth.isLoggedIn) {

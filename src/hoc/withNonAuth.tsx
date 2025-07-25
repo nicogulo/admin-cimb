@@ -5,6 +5,8 @@ import { useRouter } from "next/router"
 
 import useAuth from "@hooks/useAuth"
 import { getAuth } from "@utils/auth"
+import { useTranslation } from "next-i18next"
+import useRedirectURL from "@hooks/useRedirectURL"
 
 export const withNonAuthSSR =
     (getServerSidePropsFunc: GetServerSideProps) => async (context: GetServerSidePropsContext) => {
@@ -24,10 +26,10 @@ export const withNonAuthSSR =
 
 // eslint-disable-next-line react/function-component-definition
 export const withNonAuthClient = (WrappedComponent: React.ComponentType) => () => {
+    const { t } = useTranslation()
     const router = useRouter()
     const { auth } = useAuth()
-
-    const redirect = router.query.redirect && String(router.query.redirect)
+    const redirect = useRedirectURL()
 
     useEffect(() => {
         if (router.isReady && redirect) {
@@ -43,11 +45,11 @@ export const withNonAuthClient = (WrappedComponent: React.ComponentType) => () =
                 return
             }
 
-            router.push(`/dashboard`)
+            router.push(`/`)
         }
 
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [auth.isLoggedIn, router])
+    }, [auth.isLoggedIn, t, router])
 
     return <WrappedComponent />
 }
