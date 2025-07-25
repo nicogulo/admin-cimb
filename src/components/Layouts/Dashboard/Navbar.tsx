@@ -153,21 +153,7 @@ const DashboardNavbar = ({ adminLevel }: { adminLevel: number | undefined }) => 
             key: "kyc",
             label: <Link href="/dashboard/kyc">KYC</Link>
         },
-        {
-            icon: <ContactsOutlined />,
-            key: "crypto",
-            label: <Link href="/dashboard/crypto">Crypto</Link>
-        },
-        {
-            icon: <ContactsOutlined />,
-            key: "fiat",
-            label: <Link href="/dashboard/fiat">Fiat</Link>
-        },
-        {
-            icon: <ContactsOutlined />,
-            key: "trade",
-            label: <Link href="/dashboard/trade">Trade</Link>
-        },
+
         {
             icon: <ContactsOutlined />,
             key: "admin",

@@ -42,10 +42,10 @@ const Dashboard: React.FC = () => {
     const [adminDetails, setAdminDetails] = useState<any>({})
 
     useEffect(() => {
-        if (!isLoggedIn) {
-            router.push("/auth/sign-in")
-            return
-        }
+        // if (!isLoggedIn) {
+        //     router.push("/auth/sign-in")
+        //     return
+        // }
         const member = localStorage.getItem("admin")
         if (member) {
             const memberJson = JSON.parse(member)
