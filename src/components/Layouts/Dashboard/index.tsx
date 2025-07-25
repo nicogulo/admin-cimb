@@ -9,7 +9,8 @@ import { If, Then } from "react-if"
 
 import DashboardContent from "@components/Layouts/Dashboard/Content"
 import DashboardFooter from "@components/Layouts/Dashboard/Footer"
-import DashboardNavbar from "@components/Layouts/Dashboard/Navbar"
+import Sidebar from "@components/Layouts/Dashboard/Sidebar"
+import Topbar from "@components/Layouts/Dashboard/Topbar"
 import { WithThemes } from "@components/ThemesProvider"
 import styled from "@emotion/styled"
 
@@ -181,15 +182,17 @@ const LayoutDashboard: React.FC<LayoutProps> = (props: LayoutProps) => {
     return (
         <WithThemes>
             <PageLoader />
-            <Layout>
-                {/* <DashboardSidebar adminLevel={props.adminLevel} /> */}
-                <LayoutChild>
-                    <DashboardNavbar adminLevel={props.adminLevel} />
-                    <DashboardContent>
-                        <LayoutContent {...props} />
-                    </DashboardContent>
-                    <DashboardFooter />
-                </LayoutChild>
+            <Layout style={{ minHeight: "100vh", flexDirection: "row" }}>
+                <Sidebar />
+                <div style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+                    <Topbar />
+                    <LayoutChild style={{ flex: 1, minHeight: "100vh" }}>
+                        <DashboardContent>
+                            <LayoutContent {...props} />
+                        </DashboardContent>
+                        <DashboardFooter />
+                    </LayoutChild>
+                </div>
             </Layout>
         </WithThemes>
     )
