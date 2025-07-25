@@ -1,18 +1,21 @@
-'use client';
+/* eslint-disable no-restricted-syntax */
 
-import React, { useState } from 'react';
-import { CacheProvider } from '@emotion/react'
-import createCache from '@emotion/cache'
-import { useServerInsertedHTML } from 'next/navigation'
+"use client"
 
-if (!process.browser) React.useLayoutEffect = React.useEffect;
+import React, { useState } from "react"
+import { useServerInsertedHTML } from "next/navigation"
+
+import createCache from "@emotion/cache"
+import { CacheProvider } from "@emotion/react"
+
+if (!process.browser) React.useLayoutEffect = React.useEffect
 
 const EmotionStyleRegistry = ({ children }: { children: React.ReactNode }) => {
     const [{ cache, flush }] = useState(() => {
-        const cache = createCache({ key: 'ant-next' })
+        const cache = createCache({ key: "ant-next" })
         cache.compat = true
         const prevInsert = cache.insert
-        let inserted :any = []
+        let inserted: any = []
         cache.insert = (...args) => {
             const serialized = args[1]
             if (cache.inserted[serialized.name] === undefined) {
@@ -31,14 +34,17 @@ const EmotionStyleRegistry = ({ children }: { children: React.ReactNode }) => {
     useServerInsertedHTML(() => {
         const names = flush()
         if (names.length === 0) return null
-        let styles = ''
+        let styles = ""
         for (const name of names) {
             styles += cache.inserted[name]
         }
         return (
-            <style id="emotion" data-emotion={`${cache.key} ${names.join(' ')}`}
+            <style
+                id="emotion"
+                data-emotion={`${cache.key} ${names.join(" ")}`}
+                // eslint-disable-next-line react/no-danger
                 dangerouslySetInnerHTML={{
-                    __html: styles,
+                    __html: styles
                 }}
             />
         )
@@ -47,4 +53,4 @@ const EmotionStyleRegistry = ({ children }: { children: React.ReactNode }) => {
     return <CacheProvider value={cache}>{children}</CacheProvider>
 }
 
-export default EmotionStyleRegistry;
+export default EmotionStyleRegistry

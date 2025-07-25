@@ -1,38 +1,35 @@
-const withNextIntl = require("next-intl/plugin")(
-  // This is the default (also the `src` folder is supported out of the box)
-  "./src/i18n.ts"
-);
-
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-  // Enable source map if needed
-  productionBrowserSourceMaps: true,
-  reactStrictMode: true, // Recommended for the `pages` directory, default in `app`.
-  transpilePackages: ["antd"],
-  swcMinify: true,
-  experimental: {
-    // Required:
-    appDir: true,
-  },
-  compiler: {
-    emotion: true,
-  },
-  images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "xtb-storages.jaagat.com",
-      },
-      {
-        protocol: "https",
-        hostname: "storages.xtb.co.id",
-      },
-      {
-        protocol: "https",
-        hostname: "placehold.co",
-      },
-    ],
-  },
-};
+const { i18n } = require("./next-i18next.config.js")
 
-module.exports = withNextIntl(nextConfig);
+const nextConfig = {
+    i18n,
+    productionBrowserSourceMaps: true,
+    reactStrictMode: true,
+    transpilePackages: ["antd"],
+    devIndicators: false,
+    compiler: {
+        emotion: true
+    },
+    images: {
+        remotePatterns: [
+            {
+                protocol: "https",
+                hostname: "your-cdn-domain.com"
+            },
+            {
+                protocol: "https",
+                hostname: "your-storage-domain.com"
+            },
+            {
+                protocol: "https",
+                hostname: "images.unsplash.com"
+            },
+            {
+                protocol: "https",
+                hostname: "placehold.co"
+            }
+        ]
+    }
+}
+
+module.exports = nextConfig

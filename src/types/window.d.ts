@@ -1,7 +1,7 @@
-export {};
+export {}
 
 declare global {
-  interface Window {
-    setAuth: any;
-  }
+    interface Window {
+        setAuth: any
+    }
 }

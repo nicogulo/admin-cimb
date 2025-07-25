@@ -1,196 +1,168 @@
-import BigNumber from "bignumber.js";
-import numeral from "numeral";
+import BigNumber from "bignumber.js"
+import numeral from "numeral"
 
-import { decimalPlaces } from "./number";
+import { decimalPlaces } from "./number"
 
 if (numeral.locales["rk-id"] === undefined) {
-  numeral.register("locale", "rk-id", {
-    delimiters: {
-      thousands: ".",
-      decimal: ",",
-    },
-    abbreviations: {
-      thousand: "K",
-      million: "M",
-      billion: "B",
-      trillion: "T",
-    },
-    ordinal(number) {
-      return number === 1 ? "st" : "th";
-    },
-    currency: {
-      symbol: "Rp",
-    },
-  });
+    numeral.register("locale", "rk-id", {
+        delimiters: {
+            thousands: ".",
+            decimal: ","
+        },
+        abbreviations: {
+            thousand: "K",
+            million: "M",
+            billion: "B",
+            trillion: "T"
+        },
+        ordinal(number) {
+            return number === 1 ? "st" : "th"
+        },
+        currency: {
+            symbol: "Rp"
+        }
+    })
 }
 
 const removeTrailingZero = (num: string) => {
-  const decimalIndex = num.indexOf(",");
-  if (decimalIndex !== -1) {
-    let trimmedNum = num;
-    while (trimmedNum.endsWith("0")) {
-      trimmedNum = trimmedNum.slice(0, -1);
+    const decimalIndex = num.indexOf(",")
+    if (decimalIndex !== -1) {
+        let trimmedNum = num
+        while (trimmedNum.endsWith("0")) {
+            trimmedNum = trimmedNum.slice(0, -1)
+        }
+        if (trimmedNum.endsWith(",")) {
+            trimmedNum = trimmedNum.slice(0, -1)
+        }
+        return trimmedNum
     }
-    if (trimmedNum.endsWith(",")) {
-      trimmedNum = trimmedNum.slice(0, -1);
-    }
-    return trimmedNum;
-  }
-  return num;
-};
+    return num
+}
 
-numeral.locale("rk-id");
+numeral.locale("rk-id")
 
 export enum ROUNDING {
-  ROUND = BigNumber.ROUND_HALF_UP,
-  UP = BigNumber.ROUND_UP,
-  DOWN = BigNumber.ROUND_DOWN,
+    ROUND = BigNumber.ROUND_HALF_UP,
+    UP = BigNumber.ROUND_UP,
+    DOWN = BigNumber.ROUND_DOWN
 }
 
 interface Options {
-  precision?: number | null;
-  rounding?: ROUNDING;
-  noTrailingZero?: boolean;
+    precision?: number | null
+    rounding?: ROUNDING
+    noTrailingZero?: boolean
 }
 
 const format = {
-  decimalSeparator: ",",
-  groupSeparator: ".",
-  groupSize: 3,
-};
+    decimalSeparator: ",",
+    groupSeparator: ".",
+    groupSize: 3
+}
 
 export const formatNumber = (number: number, options?: Options) => {
-  if (
-    typeof options?.precision !== "undefined" &&
-    options?.precision !== null
-  ) {
-    return new BigNumber(number)
-      .dp(
-        (options?.precision as number) + 1,
-        ROUNDING.DOWN as BigNumber.RoundingMode
-      )
-      .toFormat(
-        options?.precision as number,
-        options?.rounding as BigNumber.RoundingMode,
-        format
-      );
-  }
+    if (typeof options?.precision !== "undefined" && options?.precision !== null) {
+        return new BigNumber(number)
+            .dp((options?.precision as number) + 1, ROUNDING.DOWN as BigNumber.RoundingMode)
+            .toFormat(options?.precision as number, options?.rounding as BigNumber.RoundingMode, format)
+    }
 
-  return new BigNumber(number).toFormat(format);
-};
+    return new BigNumber(number).toFormat(format)
+}
 
-export type Locale = "id" | "en";
+export type Locale = "id" | "en"
 
-export const formatNumberLocale = (
-  number: number,
-  locale: Locale,
-  options?: Options
-) => {
-  const formatLocale = {
-    decimalSeparator: locale === "id" ? "," : ".",
-    groupSeparator: locale === "id" ? "." : ",",
-    groupSize: 3,
-  };
+export const formatNumberLocale = (number: number, locale: Locale, options?: Options) => {
+    const formatLocale = {
+        decimalSeparator: locale === "id" ? "," : ".",
+        groupSeparator: locale === "id" ? "." : ",",
+        groupSize: 3
+    }
 
-  if (
-    typeof options?.precision !== "undefined" &&
-    options?.precision !== null
-  ) {
-    return new BigNumber(number)
-      .dp(
-        (options?.precision as number) + 1,
-        ROUNDING.DOWN as BigNumber.RoundingMode
-      )
-      .toFormat(
-        options?.precision as number,
-        options?.rounding as BigNumber.RoundingMode,
-        formatLocale
-      );
-  }
+    if (typeof options?.precision !== "undefined" && options?.precision !== null) {
+        return new BigNumber(number)
+            .dp((options?.precision as number) + 1, ROUNDING.DOWN as BigNumber.RoundingMode)
+            .toFormat(options?.precision as number, options?.rounding as BigNumber.RoundingMode, formatLocale)
+    }
 
-  return new BigNumber(number).toFormat(formatLocale);
-};
+    return new BigNumber(number).toFormat(formatLocale)
+}
 
 export const formatRupiah = (number: number, options?: Options) =>
-  `Rp${formatNumber(number, { precision: 0, ...options })}`;
+    `Rp${formatNumber(number, { precision: 0, ...options })}`
 
 export const formatRupiahPrefix = (number: number, options?: Options) => {
-  let formattedNumber = formatNumber(Math.abs(number), {
-    precision: 0,
-    ...options,
-  });
+    let formattedNumber = formatNumber(Math.abs(number), {
+        precision: 0,
+        ...options
+    })
 
-  formattedNumber = formattedNumber.replace("-", "");
+    formattedNumber = formattedNumber.replace("-", "")
 
-  if (number < 0) {
-    return `-Rp${formattedNumber}`;
-  }
-  if (number > 0) {
-    return `+Rp${formattedNumber}`;
-  }
+    if (number < 0) {
+        return `-Rp${formattedNumber}`
+    }
+    if (number > 0) {
+        return `+Rp${formattedNumber}`
+    }
 
-  return `Rp${formattedNumber}`;
-};
+    return `Rp${formattedNumber}`
+}
 
-export const formatCoin = (
-  number: number,
-  options?: Options,
-  maxDecimal: number = 8
-) => {
-  let newOptions: Options = { ...options };
-  const decimal = decimalPlaces(number);
+export const formatCoin = (number: number, options?: Options, maxDecimal: number = 8) => {
+    let newOptions: Options = { ...options }
+    const decimal = decimalPlaces(number)
 
-  if (decimal > maxDecimal && !options?.precision) {
-    newOptions = {
-      ...newOptions,
-      precision: maxDecimal,
-    };
-  }
+    if (decimal > maxDecimal && !options?.precision) {
+        newOptions = {
+            ...newOptions,
+            precision: maxDecimal
+        }
+    }
 
-  if (options?.precision === 0) {
-    newOptions = {
-      ...newOptions,
-      precision: 0,
-    };
-  }
-  const formattedNumber = formatNumber(number, newOptions);
-  const noTrailingZero = removeTrailingZero(formattedNumber);
+    if (options?.precision === 0) {
+        newOptions = {
+            ...newOptions,
+            precision: 0
+        }
+    }
+    const formattedNumber = formatNumber(number, newOptions)
+    const noTrailingZero = removeTrailingZero(formattedNumber)
 
-  return options?.noTrailingZero ? noTrailingZero : formattedNumber;
-};
+    return options?.noTrailingZero ? noTrailingZero : formattedNumber
+}
 
 export const formatShare = (number: number, options?: Options) =>
-  formatCoin(number, { noTrailingZero: true, ...options }, 9);
+    formatCoin(number, { noTrailingZero: true, ...options }, 9)
 
 export const formatUSD = (number: number, options?: Options) => {
-  const dp = new BigNumber(number).dp() || 0;
-  const isDecimal = dp > 0;
-  const precision = isDecimal ? 2 : 0;
+    const dp = new BigNumber(number).dp() || 0
+    const isDecimal = dp > 0
+    const precision = isDecimal ? 2 : 0
 
-  return `$${formatNumber(number, {
-    precision,
-    rounding: ROUNDING.DOWN,
-    ...options,
-  })}`;
-};
+    return `$${formatNumber(number, {
+        precision,
+        rounding: ROUNDING.DOWN,
+        ...options
+    })}`
+}
 
 export const formatUSDPrefix = (number: number, options?: Options) => {
-  const dp = new BigNumber(number).dp() || 0;
-  const isDecimal = dp > 0;
-  const precision = isDecimal ? 2 : 0;
-  const formattedNumber = formatNumber(Math.abs(number), {
-    precision,
-    rounding: ROUNDING.DOWN,
-    ...options,
-  });
+    const dp = new BigNumber(number).dp() || 0
+    const isDecimal = dp > 0
+    const precision = isDecimal ? 2 : 0
+    const formattedNumber = formatNumber(Math.abs(number), {
+        precision,
+        rounding: ROUNDING.DOWN,
+        ...options
+    })
 
-  if (number < 0) {
-    return `-$${formattedNumber}`;
-  }
-  if (number > 0) {
-    return `+$${formattedNumber}`;
-  }
+    if (number < 0) {
+        return `-$${formattedNumber}`
+    }
+    if (number > 0) {
+        return `+$${formattedNumber}`
+    }
 
-  return `$${formattedNumber}`;
-};
-export const getCoinDecimal = (price: number) => (price < 100000 ? 2 : 4);
+    return `$${formattedNumber}`
+}
+export const getCoinDecimal = (price: number) => (price < 100000 ? 2 : 4)

@@ -1,14 +1,12 @@
-'use client';
+"use client"
 
-import React from "react";
-import {Layout} from "antd";
+import React from "react"
+import { Layout } from "antd"
 
-const { Footer} = Layout;
+const { Footer } = Layout
 
-const DashboardFooter : React.FC = () => {
-    return(
-        <Footer style={{ textAlign: 'center' }}>Binaloka indonesia ©2024 Created with 🔥</Footer>
-    )
+const DashboardFooter: React.FC = () => {
+    return <Footer style={{ textAlign: "center" }}>Admin Dashboard ©{new Date().getFullYear()} Created with 🔥</Footer>
 }
 
 export default DashboardFooter

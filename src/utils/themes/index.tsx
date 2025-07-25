@@ -1,7 +1,9 @@
+import darkTheme from "@utils/themes/default-dark"
+import lightTheme from "@utils/themes/default-light"
 
-import lightTheme from '@/utils/themes/default-light';
-import darkTheme from '@/utils/themes/default-dark';
-export default {
+const themes = {
     lightTheme,
     darkTheme
 }
+
+export default themes

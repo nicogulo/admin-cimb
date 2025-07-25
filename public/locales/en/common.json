@@ -1,0 +1,21 @@
+{
+  "dashboard": "Dashboard",
+  "member": "Member List",
+  "member_activity": "Member Activity",
+  "member_kyc": "Member KYC",
+  "crypto": "Crypto",
+  "fiat": "Fiat",
+  "trade": "Trade",
+  "admin": "Admin",
+  "admin_activity": "Admin Activity",
+  "logs": "Logs",
+  "deposit": "Deposit",
+  "withdraw": "Withdraw",
+  "balance": "Balance",
+  "logout": "Logout",
+  "light": "Light",
+  "dark": "Dark",
+  "system": "System",
+  "sign_in": "Sign In",
+  "welcome": "Welcome"
+}

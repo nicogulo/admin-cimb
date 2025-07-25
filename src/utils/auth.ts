@@ -1,41 +1,42 @@
 /* eslint-disable import/prefer-default-export */
-import { OptionsType } from "cookies-next/lib/types";
+import { OptionsType } from "cookies-next/lib/types"
 
-import { getCookie, removeCookie, setCookie } from "./cookies";
-import { isBrowser } from "./browser";
-import { APP_ENV } from "@/config/config";
+import { APP_ENV } from "@config/config"
 
-const isDevelopment = APP_ENV?.toLocaleLowerCase() === "development";
-const hashKey = isDevelopment ? "devuhashadmin" : "uhashadmin";
-const tokenKey = isDevelopment ? "devtxbhashadmin" : "xtbhashadmin";
+import { isBrowser } from "./browser"
+import { getCookie, removeCookie, setCookie } from "./cookies"
+
+const isDevelopment = APP_ENV?.toLocaleLowerCase() === "development"
+const hashKey = isDevelopment ? "dev_auth_hash_admin" : "auth_hash_admin"
+const tokenKey = isDevelopment ? "dev_auth_token_admin" : "auth_token_admin"
 
 export const getAuth = (options?: OptionsType) => {
-  const uhash = getCookie(hashKey, options) ?? undefined;
-  const xtbhash = getCookie(tokenKey, options) ?? undefined;
+    const authHash = getCookie(hashKey, options) ?? undefined
+    const authToken = getCookie(tokenKey, options) ?? undefined
 
-  const checkAuth = Boolean((uhash && xtbhash) || xtbhash);
+    const checkAuth = Boolean((authHash && authToken) || authToken)
 
-  return {
-    token: checkAuth ? xtbhash : undefined,
-    hash: uhash || undefined,
-    isLoggedIn: checkAuth || false,
-  };
-};
+    return {
+        token: checkAuth ? authToken : undefined,
+        hash: authHash || undefined,
+        isLoggedIn: checkAuth || false
+    }
+}
 
 export const setAuth = ({ hash, token }: Auth) => {
-  if (hash) setCookie(hashKey, hash);
-  if (token) setCookie(tokenKey, token);
+    if (hash) setCookie(hashKey, hash)
+    if (token) setCookie(tokenKey, token)
 
-  return true;
-};
+    return true
+}
 
 if (isBrowser && isDevelopment) {
-  window.setAuth = setAuth;
+    window.setAuth = setAuth
 }
 
 export const resetAuth = () => {
-  removeCookie(hashKey);
-  removeCookie(tokenKey);
+    removeCookie(hashKey)
+    removeCookie(tokenKey)
 
-  return true;
-};
+    return true
+}

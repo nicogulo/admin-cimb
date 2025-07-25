@@ -1,398 +1,292 @@
-"use client";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import React, { useEffect, useState } from "react"
+import Link from "next/link"
+import { useRouter } from "next/router"
+import { useTranslation } from "next-i18next"
+import { useTheme } from "next-themes"
+import { Avatar, Dropdown, Layout, Menu, MenuProps, Space, theme } from "antd"
 
-import React, { useEffect, useState } from "react";
-import { Avatar, Dropdown, Layout, Menu, MenuProps, Space, theme } from "antd";
-import { useTheme } from "next-themes";
-import { useTranslations } from "next-intl";
-import IconTranslation from "@/icons/translation";
-import IconSun from "@/icons/sun";
-import IconMoon from "@/icons/moon";
-import IconLaptop from "@/icons/laptop";
-import { usePathname } from "next-intl/client";
 import {
-  currentOpenKey,
-  currentPath,
-  languages,
-  withLocalePath,
-} from "src/utils/locale";
-import Link from "next-intl/link";
-import {
-  UserOutlined,
-  LoginOutlined,
-  ContactsOutlined,
-  TeamOutlined,
-  FileSearchOutlined,
-} from "@ant-design/icons";
-import useAuth from "@/hooks/useAuth";
-import { resetAuth } from "@/utils/auth";
-import { useRouter } from "next/navigation";
-import LogoXTBIndonesia from "@/icons/antnext";
-const { Header } = Layout;
+    ContactsOutlined,
+    FileSearchOutlined,
+    HomeOutlined,
+    LoginOutlined,
+    TeamOutlined,
+    UserOutlined
+} from "@ant-design/icons"
+import LocaleSwitcher from "@components/LocaleSwitcher"
+import Icons from "@icons/icon"
+import CompanyLogo from "@icons/Images/CompanyLogo"
+import IconLaptop from "@icons/Images/Laptop"
+import IconMoon from "@icons/Images/Moon"
+import IconSun from "@icons/Images/Sun"
+import { resetAuth } from "@utils/auth"
 
-const ClockAPI = () => {
-  const [dateState, setDateState] = useState(new Date());
-
-  const t = new Date();
-  const c = t.getHours() - 12;
-  useEffect(() => {
-    setInterval(() => {
-      setDateState(new Date());
-    }, 1000);
-  }, []);
-
-  return (
-    <>
-      {dateState.toLocaleString("en-US", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: false,
-      })}
-    </>
-  );
-};
+const { Header } = Layout
 
 const ThemeToggle = () => {
-  const { setTheme, theme } = useTheme();
-  const t = useTranslations("theme");
-  const onClick: MenuProps["onClick"] = ({ key }) => {
-    setTheme(key);
-  };
+    const { setTheme, theme } = useTheme()
+    const { t } = useTranslation("common")
 
-  const items: MenuProps["items"] = [
-    {
-      key: "light",
-      label: (
-        <div className="flex items-center">
-          <IconSun />
-          <span>{t("light")}</span>
-        </div>
-      ),
-    },
-    {
-      key: "dark",
-      label: (
-        <div className="flex items-center">
-          <IconMoon />
-          <span>{t("dark")}</span>
-        </div>
-      ),
-    },
-    {
-      key: "system",
-      label: (
-        <div className="flex items-center">
-          <IconLaptop />
-          <span>{t("system")}</span>
-        </div>
-      ),
-    },
-  ];
-
-  return (
-    <Dropdown
-      menu={{
-        items,
-        selectable: true,
-        selectedKeys: [theme ?? "system"],
-        onClick,
-      }}
-      trigger={["click"]}
-    >
-      <span
-        style={{
-          marginRight: 15,
-          width: "20px",
-          height: "100%",
-          cursor: "pointer",
-        }}
-      >
-        {theme === "system" ? (
-          window.matchMedia("(prefers-color-scheme: dark)").matches ? (
-            <IconMoon />
-          ) : (
-            <IconSun />
-          )
-        ) : theme === "light" ? (
-          <IconSun />
-        ) : (
-          <IconMoon />
-        )}
-      </span>
-    </Dropdown>
-  );
-};
-
-const LocaleSwitcher = () => {
-  const pathname = usePathname();
-
-  return (
-    <Dropdown
-      menu={{
-        items: Object.entries(languages).map(([lang, setting]) => ({
-          key: lang,
-          label: (
-            <Link href={pathname ?? "/"} locale={lang}>
-              {setting.flag}&nbsp;&nbsp;{setting.name}
-            </Link>
-          ),
-        })),
-      }}
-      trigger={["click"]}
-    >
-      <span
-        style={{
-          marginRight: 15,
-          width: "20px",
-          height: "100%",
-          cursor: "pointer",
-        }}
-      >
-        <IconTranslation />
-      </span>
-    </Dropdown>
-  );
-};
-
-const DashboardNavbar = ({
-  adminLevel,
-}: {
-  adminLevel: number | undefined;
-}) => {
-  const {
-    token: {
-      colorPrimary,
-      colorPrimaryBg,
-      colorBgContainer,
-      colorText,
-      colorTextTertiary,
-    },
-  } = theme.useToken();
-  const router = useRouter();
-  const { auth } = useAuth();
-  const t = useTranslations("sidebar");
-  const fullPath = usePathname();
-
-  const [adminDetails, setAdminDetails] = useState<any>({});
-
-  useEffect(() => {
-    const member = localStorage.getItem("admin");
-    if (member) {
-      const memberJson = JSON.parse(member);
-      setAdminDetails(memberJson);
+    const onClick: MenuProps["onClick"] = ({ key }) => {
+        setTheme(key)
     }
-  }, []);
 
-  const handleLogout = async () => {
-    localStorage.removeItem("admin");
-    resetAuth();
-    router.push("/auth/sign-in");
-  };
+    const items: MenuProps["items"] = [
+        {
+            key: "light",
+            label: (
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <Icons icon={<IconSun />} width={16} height={16} />
+                    <span>{t("light") || "Light"}</span>
+                </div>
+            )
+        },
+        {
+            key: "dark",
+            label: (
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <Icons icon={<IconMoon />} width={16} height={16} />
+                    <span>{t("dark") || "Dark"}</span>
+                </div>
+            )
+        },
+        {
+            key: "system",
+            label: (
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <Icons icon={<IconLaptop />} width={16} height={16} />
+                    <span>{t("system") || "System"}</span>
+                </div>
+            )
+        }
+    ]
 
-  const items: MenuProps["items"] = [
-    {
-      label: (
-        <span
-          style={{
-            color: "#ed3939",
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 8,
-          }}
-          onClick={handleLogout}
+    return (
+        <Dropdown
+            menu={{
+                items,
+                selectable: true,
+                selectedKeys: [theme ?? "system"],
+                onClick
+            }}
+            trigger={["click"]}
         >
-          <LoginOutlined /> Log out
-        </span>
-      ),
-      key: "0",
-    },
-  ];
-
-  let menu: any = [
-    // {
-    //   icon: <HomeOutlined />,
-    //   key: "dashboard",
-    //   label: (
-    //     <Link href={withLocalePath(fullPath, "/dashboard")}>
-    //       {t("dashboard")}
-    //     </Link>
-    //   ),
-    //   title: t("dashboard"),
-    // },
-  ];
-
-    menu.push({
-      icon: <TeamOutlined />,
-      key: "member",
-      label: (
-        <Link href={withLocalePath(fullPath, "/dashboard/member")}>
-          {t("member:list")}
-        </Link>
-      ),
-      title: t("member:list"),
-    });
-      menu.push({
-          icon: <TeamOutlined />,
-          key: "member-activity",
-          label: (
-              <Link href={withLocalePath(fullPath, "/dashboard/member/activity")}>
-                  Member Activity
-              </Link>
-          ),
-          title: "Member Activity",
-      });
-
-    menu.push({
-      icon: <FileSearchOutlined />,
-      key: "kyc",
-      label: (
-        <Link href={withLocalePath(fullPath, "/dashboard/kyc")}>
-          {t("member:kyc")}
-        </Link>
-      ),
-      title: t("member:kyc"),
-    });
-
-
-
-      menu.push({
-          icon: <ContactsOutlined />,
-          key: "crypto",
-          label: (
-              <Link href={withLocalePath(fullPath, "/dashboard/crypto")}>
-                  Crypto
-              </Link>
-          ),
-          title: "Crypto",
-      });
-      menu.push({
-          icon: <ContactsOutlined />,
-          key: "fiat",
-          label: (
-              <Link href={withLocalePath(fullPath, "/dashboard/fiat")}>
-                 Fiat
-              </Link>
-          ),
-          title: "Fiat",
-      });
-      menu.push({
-          icon: <ContactsOutlined />,
-          key: "trade",
-          label: (
-              <Link href={withLocalePath(fullPath, "/dashboard/trade")}>
-                  Trade
-              </Link>
-          ),
-          title: "Trade",
-      });
-
-    menu.push({
-      icon: <ContactsOutlined />,
-      key: "admin",
-      label: (
-        <Link href={withLocalePath(fullPath, "/dashboard/admin")}>
-          {t("admin")}
-        </Link>
-      ),
-      title: t("admin"),
-    });
-      menu.push({
-          icon: <ContactsOutlined />,
-          key: "admin-activity",
-          label: (
-              <Link href={withLocalePath(fullPath, "/dashboard/admin/activity")}>
-                  Admin Activity
-              </Link>
-          ),
-          title: "Admin Activity",
-      });
-
-  return (
-    <Header
-      style={{
-        padding: "16px 24px",
-        margin: 0,
-        position: "sticky",
-        top: 0,
-        zIndex: 1,
-        width: "100%",
-        display: "flex",
-        alignItems: "center",
-        background: colorBgContainer,
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          width: "100%",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "start",
-            height: "64px",
-            cursor: "pointer",
-          }}
-          onClick={() => router.push("/dashboard")}
-        >
-          <LogoXTBIndonesia />
-        </div>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            margin: "4px 0",
-            overflow: "hidden",
-          }}
-        >
-          <Menu
-            mode="horizontal"
-            defaultSelectedKeys={currentPath(fullPath)}
-            defaultOpenKeys={currentOpenKey(fullPath)}
-            items={menu}
-            style={{ width: "100%" }}
-          />
-
-          <Dropdown menu={{ items }} trigger={["click"]}>
-            <div
-              onClick={(e) => e.preventDefault()}
-              style={{ marginRight: 15, cursor: "pointer" }}
+            <span
+                style={{
+                    cursor: "pointer"
+                }}
             >
-              <Space>
-                <Avatar
-                  style={{
-                    color: colorPrimary,
-                    backgroundColor: colorPrimaryBg,
-                  }}
-                  icon={<UserOutlined />}
-                />
-                <span
-                  style={{
-                    color: colorText,
-                    fontSize: "14px",
-                    lineHeight: "1.5715",
-                    overflow: "hidden",
-                    whiteSpace: "nowrap",
-                    textOverflow: "ellipsis",
-                  }}
-                  title="Admin"
-                >
-                  {adminDetails?.name || "Admin"}
-                </span>
-              </Space>
-            </div>
-          </Dropdown>
-        </div>
-      </div>
-    </Header>
-  );
-};
+                {theme === "system" ? (
+                    typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches ? (
+                        <Icons icon={<IconMoon />} width={20} height={20} />
+                    ) : (
+                        <Icons icon={<IconSun />} width={20} height={20} />
+                    )
+                ) : theme === "light" ? (
+                    <Icons icon={<IconSun />} width={20} height={20} />
+                ) : (
+                    <Icons icon={<IconMoon />} width={20} height={20} />
+                )}
+            </span>
+        </Dropdown>
+    )
+}
 
-export default DashboardNavbar;
+const DashboardNavbar = ({ adminLevel }: { adminLevel: number | undefined }) => {
+    const {
+        token: { colorPrimary, colorPrimaryBg, colorBgContainer, colorText }
+    } = theme.useToken()
+    const router = useRouter()
+
+    const { t } = useTranslation("common")
+
+    const [adminDetails, setAdminDetails] = useState<any>({})
+
+    useEffect(() => {
+        const member = localStorage.getItem("admin")
+        if (member) {
+            const memberJson = JSON.parse(member)
+            setAdminDetails(memberJson)
+        }
+    }, [])
+
+    const handleLogout = async () => {
+        localStorage.removeItem("admin")
+        resetAuth()
+        router.push("/auth/sign-in")
+    }
+
+    const dropdownItems: MenuProps["items"] = [
+        {
+            label: (
+                <span
+                    style={{
+                        color: "#ed3939",
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        gap: 8
+                    }}
+                    onClick={handleLogout}
+                >
+                    <LoginOutlined /> Log out
+                </span>
+            ),
+            key: "0"
+        }
+    ]
+
+    const menuItems: any = [
+        {
+            icon: <HomeOutlined />,
+            key: "dashboard",
+            label: <Link href="/dashboard">{t("dashboard") || "Dashboard"}</Link>
+        },
+        {
+            icon: <TeamOutlined />,
+            key: "member",
+            label: <Link href="/dashboard/member">{t("member") || "Members"}</Link>
+        },
+        {
+            icon: <FileSearchOutlined />,
+            key: "kyc",
+            label: <Link href="/dashboard/kyc">KYC</Link>
+        },
+        {
+            icon: <ContactsOutlined />,
+            key: "crypto",
+            label: <Link href="/dashboard/crypto">Crypto</Link>
+        },
+        {
+            icon: <ContactsOutlined />,
+            key: "fiat",
+            label: <Link href="/dashboard/fiat">Fiat</Link>
+        },
+        {
+            icon: <ContactsOutlined />,
+            key: "trade",
+            label: <Link href="/dashboard/trade">Trade</Link>
+        },
+        {
+            icon: <ContactsOutlined />,
+            key: "admin",
+            label: <Link href="/dashboard/admin">{t("admin") || "Admin"}</Link>
+        },
+        {
+            icon: <ContactsOutlined />,
+            key: "logs",
+            label: <Link href="/dashboard/logs">Logs</Link>
+        }
+    ]
+
+    // Get current path for menu selection
+    const currentPath = router.pathname
+    const selectedKeys = []
+    if (currentPath.includes("/member")) selectedKeys.push("member")
+    else if (currentPath.includes("/kyc")) selectedKeys.push("kyc")
+    else if (currentPath.includes("/crypto")) selectedKeys.push("crypto")
+    else if (currentPath.includes("/fiat")) selectedKeys.push("fiat")
+    else if (currentPath.includes("/trade")) selectedKeys.push("trade")
+    else if (currentPath.includes("/admin")) selectedKeys.push("admin")
+    else if (currentPath.includes("/logs")) selectedKeys.push("logs")
+    else selectedKeys.push("dashboard")
+
+    return (
+        <Header
+            style={{
+                padding: "16px 24px",
+                margin: 0,
+                position: "sticky",
+                top: 0,
+                zIndex: 1,
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+                background: colorBgContainer
+            }}
+        >
+            <div
+                style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    width: "100%"
+                }}
+            >
+                <div
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "start",
+                        height: "64px",
+                        cursor: "pointer"
+                    }}
+                    onClick={() => router.push("/dashboard")}
+                >
+                    <Icons icon={<CompanyLogo />} width={32} height={32} />
+                </div>
+
+                <div
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        flex: 1,
+                        margin: "0 24px",
+                        overflow: "hidden"
+                    }}
+                >
+                    <Menu
+                        mode="horizontal"
+                        selectedKeys={selectedKeys}
+                        items={menuItems}
+                        style={{
+                            width: "100%",
+                            border: "none",
+                            background: "transparent"
+                        }}
+                    />
+                </div>
+
+                <div
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 16
+                    }}
+                >
+                    <ThemeToggle />
+                    <LocaleSwitcher />
+
+                    <Dropdown menu={{ items: dropdownItems }} trigger={["click"]}>
+                        <div onClick={(e) => e.preventDefault()} style={{ cursor: "pointer" }}>
+                            <Space>
+                                <Avatar
+                                    style={{
+                                        color: colorPrimary,
+                                        backgroundColor: colorPrimaryBg
+                                    }}
+                                    icon={<UserOutlined />}
+                                />
+                                <span
+                                    style={{
+                                        color: colorText,
+                                        fontSize: "14px",
+                                        lineHeight: "1.5715",
+                                        overflow: "hidden",
+                                        whiteSpace: "nowrap",
+                                        textOverflow: "ellipsis"
+                                    }}
+                                    title="Admin"
+                                >
+                                    {adminDetails?.name || "Admin"}
+                                </span>
+                            </Space>
+                        </div>
+                    </Dropdown>
+                </div>
+            </div>
+        </Header>
+    )
+}
+
+export default DashboardNavbar
