@@ -204,7 +204,6 @@ const DashboardNavbar = ({ adminLevel }: { adminLevel: number | undefined }) => 
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "start",
-                        height: "64px",
                         cursor: "pointer"
                     }}
                     onClick={() => router.push("/dashboard")}
