@@ -9,8 +9,8 @@ export default function Document() {
                 <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
 
                 {/* Theme color */}
-                <meta name="theme-color" content="#667eea" />
-                <meta name="msapplication-TileColor" content="#667eea" />
+                <meta name="theme-color" content="#D5001C" />
+                <meta name="msapplication-TileColor" content="#D5001C" />
             </Head>
             <body>
                 <Main />
