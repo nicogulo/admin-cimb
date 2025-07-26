@@ -69,7 +69,7 @@ export const useLogin = () => {
             router.prefetch(redirect, redirect)
         }
 
-        router.prefetch("/dashboard")
+        router.prefetch("/")
     }, [router, redirect])
 
     return {
