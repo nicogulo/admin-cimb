@@ -11,7 +11,7 @@ type Props = {
 }
 const DashboardContent: React.FC<Props> = (props: Props) => {
     const {
-        token: { colorBgContainer }
+        token: { colorBgContainer, colorBorder }
     } = theme.useToken()
 
     return (
@@ -20,8 +20,9 @@ const DashboardContent: React.FC<Props> = (props: Props) => {
                 style={{
                     padding: 10,
                     background: colorBgContainer,
-                    borderRadius: 5,
-                    minHeight: "90%"
+                    borderRadius: 12,
+                    border: `1px solid ${colorBorder}`,
+                    height: "100%"
                 }}
             >
                 {props.children}

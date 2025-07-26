@@ -2,12 +2,73 @@ import React from "react"
 import { LoginOutlined } from "@ant-design/icons"
 import LocaleSwitcher from "@components/LocaleSwitcher"
 import { useTheme } from "next-themes"
-import { theme as antdTheme } from "antd"
+import { theme as antdTheme, MenuProps } from "antd"
 import Icons from "@icons/icon"
 import IconSun from "@icons/Images/Sun"
 import IconMoon from "@icons/Images/Moon"
 import IconLaptop from "@icons/Images/Laptop"
 import { Dropdown } from "antd"
+import { useTranslation } from "next-i18next"
+
+const ThemeToggle = () => {
+    const { setTheme, theme } = useTheme()
+    const { t } = useTranslation("common")
+
+    const onClick: MenuProps["onClick"] = ({ key }) => {
+        setTheme(key)
+    }
+
+    const items: MenuProps["items"] = [
+        {
+            key: "light",
+            label: (
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <Icons icon={<IconSun />} width={16} height={16} />
+                    <span>{t("light") || "Light"}</span>
+                </div>
+            )
+        },
+        {
+            key: "dark",
+            label: (
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <Icons icon={<IconMoon />} width={16} height={16} />
+                    <span>{t("dark") || "Dark"}</span>
+                </div>
+            )
+        }
+    ]
+
+    return (
+        <Dropdown
+            menu={{
+                items,
+                selectable: true,
+                selectedKeys: [theme ?? "system"],
+                onClick
+            }}
+            trigger={["click"]}
+        >
+            <span
+                style={{
+                    cursor: "pointer"
+                }}
+            >
+                {theme === "system" ? (
+                    typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches ? (
+                        <Icons icon={<IconMoon />} width={20} height={20} />
+                    ) : (
+                        <Icons icon={<IconSun />} width={20} height={20} />
+                    )
+                ) : theme === "light" ? (
+                    <Icons icon={<IconSun />} width={20} height={20} />
+                ) : (
+                    <Icons icon={<IconMoon />} width={20} height={20} />
+                )}
+            </span>
+        </Dropdown>
+    )
+}
 
 const DashboardTopbar: React.FC = () => {
     const { setTheme, theme } = useTheme()
@@ -72,6 +133,7 @@ const DashboardTopbar: React.FC = () => {
             }}
         >
             {/* LocaleSwitcher & ThemeSwitcher hidden for now */}
+            <ThemeToggle />
             <button
                 onClick={handleLogout}
                 style={{

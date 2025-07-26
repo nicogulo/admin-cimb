@@ -6,7 +6,11 @@ import { Layout } from "antd"
 const { Footer } = Layout
 
 const DashboardFooter: React.FC = () => {
-    return <Footer style={{ textAlign: "center" }}>Admin Dashboard ©{new Date().getFullYear()} Created with 🔥</Footer>
+    return (
+        <Footer style={{ textAlign: "center" }}>
+            © {new Date().getFullYear()} PT Verihubs Inteligensia Nusantara. All Rights Reserved. 🔥
+        </Footer>
+    )
 }
 
 export default DashboardFooter

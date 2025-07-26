@@ -24,10 +24,6 @@ type LayoutProps = {
     adminLevel?: number
 }
 
-const LayoutChild = styled(Layout)`
-    min-height: 100vh;
-`
-
 const PageLoader: React.FC = () => {
     const { token } = theme.useToken()
     return (
@@ -186,12 +182,12 @@ const LayoutDashboard: React.FC<LayoutProps> = (props: LayoutProps) => {
                 <Sidebar />
                 <div style={{ flex: 1, display: "flex", flexDirection: "column", minHeight: "100vh" }}>
                     <Topbar />
-                    <LayoutChild style={{ flex: 1, minHeight: "100vh" }}>
+                    <Layout>
                         <DashboardContent>
                             <LayoutContent {...props} />
                         </DashboardContent>
                         <DashboardFooter />
-                    </LayoutChild>
+                    </Layout>
                 </div>
             </Layout>
         </WithThemes>

@@ -12,11 +12,12 @@ import {
     TransactionOutlined
 } from "@ant-design/icons"
 import Icons from "@icons/icon"
-import CompanyLogo from "@icons/Images/CompanyLogo"
 
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons"
 import { theme as antdTheme } from "antd"
 import { useTranslation } from "next-i18next"
+import Image from "next/image"
+import { useTheme } from "next-themes"
 
 const Sidebar: React.FC = () => {
     const router = useRouter()
@@ -24,6 +25,8 @@ const Sidebar: React.FC = () => {
     const [adminDetails, setAdminDetails] = useState<any>({})
     const [collapsed, setCollapsed] = useState(false)
     const { token } = antdTheme.useToken()
+    const { theme } = useTheme()
+    const isDarkMode = theme === "dark"
 
     useEffect(() => {
         const member = localStorage.getItem("admin")
@@ -38,7 +41,6 @@ const Sidebar: React.FC = () => {
         window.location.href = "/auth/sign-in"
     }
 
-    // Example menu with submenus
     const menuItems: MenuProps["items"] = [
         {
             key: "home",
@@ -61,7 +63,7 @@ const Sidebar: React.FC = () => {
             label: t("admin"),
             children: [
                 {
-                    key: "admin-settings",
+                    key: "admin",
                     label: <Link href="/admin">{t("admin_list")}</Link>
                 },
                 {
@@ -69,7 +71,7 @@ const Sidebar: React.FC = () => {
                     label: <Link href="/admin/log">{t("admin_log")}</Link>
                 },
                 {
-                    key: "role",
+                    key: "admin-role",
                     label: <Link href="/admin/role">{t("admin_role")}</Link>
                 }
             ]
@@ -81,18 +83,37 @@ const Sidebar: React.FC = () => {
         }
     ]
 
-    // Get current path for menu selection
-    // Set default language to English
     if (router.locale !== "en") {
         router.replace(router.pathname, router.asPath, { locale: "en" })
     }
     const currentPath = router.pathname
     const selectedKeys: string[] = []
-    if (currentPath.includes("/member")) selectedKeys.push("member")
-    else if (currentPath.includes("/kyc")) selectedKeys.push("kyc")
-    else if (currentPath.includes("/admin")) selectedKeys.push("admin")
-    else if (currentPath.includes("/logs")) selectedKeys.push("logs")
-    else selectedKeys.push("dashboard")
+
+    switch (currentPath) {
+        case "/":
+            selectedKeys.push("home")
+            break
+        case "/customer-management":
+            selectedKeys.push("customer-management")
+            break
+        case "/transactions":
+            selectedKeys.push("transactions")
+            break
+        case "/admin":
+            selectedKeys.push("admin")
+            break
+        case "/admin/log":
+            selectedKeys.push("admin-log")
+            break
+        case "/admin/role":
+            selectedKeys.push("admin-role")
+            break
+        case "/profile":
+            selectedKeys.push("profile")
+            break
+        default:
+            selectedKeys.push("home")
+    }
 
     return (
         <div
@@ -106,7 +127,6 @@ const Sidebar: React.FC = () => {
                 flexDirection: "column"
             }}
         >
-            {/* Logo dan toggle */}
             <div
                 style={{
                     display: "flex",
@@ -115,7 +135,12 @@ const Sidebar: React.FC = () => {
                     padding: "24px 16px"
                 }}
             >
-                <Icons icon={<CompanyLogo />} width={collapsed ? 32 : 40} height={collapsed ? 32 : 40} />
+                <Image
+                    src={isDarkMode ? "/images/logo-dark.png" : "/images/logo-light.png"}
+                    alt="Company Logo"
+                    width={collapsed ? 32 : 40}
+                    height={collapsed ? 32 : 40}
+                />
                 <button
                     style={{
                         background: "none",
