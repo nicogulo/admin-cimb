@@ -9,10 +9,6 @@ import { ExportOutlined } from "@ant-design/icons"
 
 const { RangePicker } = DatePicker
 
-// Show list of transaction, Transaction ID, CIF, Channel, Action, Status
-// 	Admin bisa pencet trx dan masuk ke dalem dengan lebih detail, dan show: trx_id, base face, compare face, CIF, Channel (Octo, SSB, eTP, etc.), Date Time, Status (Success/Failed), Action (Registration, Forget Password, Forget Email, Forget 2FA) string aja, Zoloz trx_id, Zoloz Result Log (Json, di bikin popup)
-// admin bisa export CSV: Bisa export data trx, dengan memfilter dulu listnya: CIF, Transaction Date (Last 24Hr, Last 7 Days, Last 30 days, custom: From-To), Channel, Status,Action
-
 const dummyData = [
     {
         trx_id: 201,
@@ -233,31 +229,32 @@ const Transaction = () => {
     const columns = [
         {
             title: t("date_time"),
-            dataIndex: "dateTime",
-            key: "dateTime",
+            dataIndex: "created_at",
+            key: "created_at",
             render: (text: string) => formatDate(text, "DD MMM YYYY HH:mm")
         },
         {
             title: t("transaction_id"),
-            dataIndex: "transactionId",
-            key: "transactionId"
+            dataIndex: "trx_id",
+            key: "trx_id"
         },
         {
             title: t("cif"),
-            dataIndex: "cif",
-            key: "cif"
+            dataIndex: "user_id",
+            key: "user_id"
         },
 
         {
             title: t("zoloz_trx_id"),
-            dataIndex: "zolozTrxId",
-            key: "zolozTrxId"
+            dataIndex: "zoloz_trx_id",
+            key: "zoloz_trx_id"
         },
 
         {
             title: t("channel"),
             dataIndex: "channel",
-            key: "channel"
+            key: "channel",
+            align: "center" as const
         },
         {
             title: t("action"),
@@ -290,7 +287,7 @@ const Transaction = () => {
                         onChange={(e) => setSearchCif(e.target.value)}
                     />
                     <Select
-                        placeholder={t("last_transaction_date")}
+                        placeholder="Transaction Date"
                         value={dateFilter}
                         onChange={(value) => setDateFilter(value)}
                         options={dateOptions}
@@ -309,7 +306,7 @@ const Transaction = () => {
                         />
                     )}
                     <Select
-                        placeholder={t("last_transaction_channel")}
+                        placeholder="Transaction Channel"
                         value={channel}
                         onChange={(value) => setChannel(value)}
                         options={channelOptions}
