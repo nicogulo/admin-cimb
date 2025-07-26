@@ -113,9 +113,46 @@ const DashboardNavbar = ({ adminLevel }: { adminLevel: number | undefined }) => 
 
     const handleLogout = async () => {
         localStorage.removeItem("admin")
-        resetAuth()
-        router.push("/auth/sign-in")
     }
+    const menuItems: any = [
+        {
+            icon: <HomeOutlined />,
+            key: "home",
+            label: <Link href="/">{t("dashboard") || "Dashboard"}</Link>
+        },
+        {
+            icon: <TeamOutlined />,
+            key: "member",
+            label: <Link href="/customer-management">{t("member") || "Members"}</Link>
+        },
+        {
+            icon: <FileSearchOutlined />,
+            key: "kyc",
+            label: <Link href="/kyc">KYC</Link>
+        },
+        {
+            icon: <ContactsOutlined />,
+            key: "admin",
+            label: <Link href="/admin">{t("admin") || "Admin"}</Link>
+        },
+        {
+            icon: <ContactsOutlined />,
+            key: "logs",
+            label: <Link href="/logs">Logs</Link>
+        }
+    ]
+
+    // Get current path for menu selection
+    const currentPath = router.pathname
+    const selectedKeys = []
+    if (currentPath === "/" || currentPath === "/home") selectedKeys.push("home")
+    else if (currentPath.startsWith("/member")) selectedKeys.push("member")
+    else if (currentPath.startsWith("/kyc")) selectedKeys.push("kyc")
+    else if (currentPath.startsWith("/crypto")) selectedKeys.push("crypto")
+    else if (currentPath.startsWith("/fiat")) selectedKeys.push("fiat")
+    else if (currentPath.startsWith("/trade")) selectedKeys.push("trade")
+    else if (currentPath.startsWith("/admin")) selectedKeys.push("admin")
+    else if (currentPath.startsWith("/logs")) selectedKeys.push("logs")
 
     const dropdownItems: MenuProps["items"] = [
         {
@@ -136,47 +173,6 @@ const DashboardNavbar = ({ adminLevel }: { adminLevel: number | undefined }) => 
             key: "0"
         }
     ]
-
-    const menuItems: any = [
-        {
-            icon: <HomeOutlined />,
-            key: "dashboard",
-            label: <Link href="/dashboard">{t("dashboard") || "Dashboard"}</Link>
-        },
-        {
-            icon: <TeamOutlined />,
-            key: "member",
-            label: <Link href="/dashboard/member">{t("member") || "Members"}</Link>
-        },
-        {
-            icon: <FileSearchOutlined />,
-            key: "kyc",
-            label: <Link href="/dashboard/kyc">KYC</Link>
-        },
-
-        {
-            icon: <ContactsOutlined />,
-            key: "admin",
-            label: <Link href="/dashboard/admin">{t("admin") || "Admin"}</Link>
-        },
-        {
-            icon: <ContactsOutlined />,
-            key: "logs",
-            label: <Link href="/dashboard/logs">Logs</Link>
-        }
-    ]
-
-    // Get current path for menu selection
-    const currentPath = router.pathname
-    const selectedKeys = []
-    if (currentPath.includes("/member")) selectedKeys.push("member")
-    else if (currentPath.includes("/kyc")) selectedKeys.push("kyc")
-    else if (currentPath.includes("/crypto")) selectedKeys.push("crypto")
-    else if (currentPath.includes("/fiat")) selectedKeys.push("fiat")
-    else if (currentPath.includes("/trade")) selectedKeys.push("trade")
-    else if (currentPath.includes("/admin")) selectedKeys.push("admin")
-    else if (currentPath.includes("/logs")) selectedKeys.push("logs")
-    else selectedKeys.push("dashboard")
 
     return (
         <Header
@@ -206,7 +202,7 @@ const DashboardNavbar = ({ adminLevel }: { adminLevel: number | undefined }) => 
                         justifyContent: "start",
                         cursor: "pointer"
                     }}
-                    onClick={() => router.push("/dashboard")}
+                    onClick={() => router.push("/")}
                 >
                     <Icons icon={<CompanyLogo />} width={32} height={32} />
                 </div>

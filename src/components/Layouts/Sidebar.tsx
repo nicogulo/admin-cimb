@@ -8,20 +8,21 @@ import {
     FileSearchOutlined,
     ContactsOutlined,
     UserOutlined,
-    LoginOutlined
+    LoginOutlined,
+    TransactionOutlined
 } from "@ant-design/icons"
 import Icons from "@icons/icon"
 import CompanyLogo from "@icons/Images/CompanyLogo"
 
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons"
-import { useTheme } from "next-themes"
 import { theme as antdTheme } from "antd"
+import { useTranslation } from "next-i18next"
 
 const Sidebar: React.FC = () => {
     const router = useRouter()
+    const { t } = useTranslation("common")
     const [adminDetails, setAdminDetails] = useState<any>({})
     const [collapsed, setCollapsed] = useState(false)
-    const { setTheme, theme } = useTheme()
     const { token } = antdTheme.useToken()
 
     useEffect(() => {
@@ -40,59 +41,51 @@ const Sidebar: React.FC = () => {
     // Example menu with submenus
     const menuItems: MenuProps["items"] = [
         {
-            key: "dashboard",
+            key: "home",
             icon: <HomeOutlined />,
-            label: <Link href="/dashboard">Dashboard</Link>
+            label: <Link href="/">Home</Link>
         },
         {
-            key: "member",
+            key: "customer-management",
             icon: <TeamOutlined />,
-            label: "Members",
-            children: [
-                {
-                    key: "member-list",
-                    label: <Link href="/dashboard/member">Daftar Member</Link>
-                },
-                {
-                    key: "member-activity",
-                    label: <Link href="/dashboard/member/activity">Aktivitas Member</Link>
-                }
-            ]
+            label: <Link href="/customer-management">{t("customer_management.title")}</Link>
         },
         {
-            key: "kyc",
-            icon: <FileSearchOutlined />,
-            label: "KYC",
-            children: [
-                {
-                    key: "kyc-list",
-                    label: <Link href="/dashboard/kyc">Daftar KYC</Link>
-                }
-            ]
+            key: "transactions",
+            icon: <TransactionOutlined />,
+            label: <Link href="/transactions">{t("transactions")}</Link>
         },
         {
             key: "admin",
             icon: <ContactsOutlined />,
-            label: "Admin",
+            label: t("admin"),
             children: [
                 {
-                    key: "admin-list",
-                    label: <Link href="/dashboard/admin">Daftar Admin</Link>
+                    key: "admin-log",
+                    label: <Link href="/admin/log">{t("admin_log")}</Link>
                 },
                 {
-                    key: "admin-activity",
-                    label: <Link href="/dashboard/admin/activity">Aktivitas Admin</Link>
+                    key: "admin-settings",
+                    label: <Link href="/admin/settings">{t("admin_settings")}</Link>
+                },
+                {
+                    key: "role",
+                    label: <Link href="/admin/role">{t("admin_role")}</Link>
                 }
             ]
         },
         {
-            key: "logs",
-            icon: <ContactsOutlined />,
-            label: <Link href="/dashboard/logs">Logs</Link>
+            key: "profile",
+            icon: <UserOutlined />,
+            label: <Link href="/profile">{t("profile")}</Link>
         }
     ]
 
     // Get current path for menu selection
+    // Set default language to English
+    if (router.locale !== "en") {
+        router.replace(router.pathname, router.asPath, { locale: "en" })
+    }
     const currentPath = router.pathname
     const selectedKeys: string[] = []
     if (currentPath.includes("/member")) selectedKeys.push("member")
@@ -104,7 +97,7 @@ const Sidebar: React.FC = () => {
     return (
         <div
             style={{
-                width: collapsed ? 80 : 240,
+                width: collapsed ? 80 : 260,
                 minHeight: "100vh",
                 background: token.colorBgContainer,
                 borderRight: `1px solid ${token.colorBorder}`,
