@@ -1,5 +1,5 @@
-import darkTheme from "@utils/themes/default-dark"
-import lightTheme from "@utils/themes/default-light"
+import darkTheme from "./default-dark"
+import lightTheme from "./default-light"
 
 const themes = {
     lightTheme,
