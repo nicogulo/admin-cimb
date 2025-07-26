@@ -9,6 +9,8 @@ import useAdminLog from "@hooks/useAdminLog"
 import Icons from "@icons/icon"
 import CompanyLogo from "@icons/Images/CompanyLogo"
 import { setAuth } from "@utils/auth"
+import Image from "next/image"
+import { useTheme } from "next-themes"
 
 const { Title, Text } = Typography
 
@@ -20,8 +22,7 @@ const LoginContainer = styled.div`
 
 const ImageSection = styled.div`
     flex: 1;
-    background: url("https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80")
-        center/cover;
+    background: url("/images/bg-sign-in.jpg") center/cover;
     position: relative;
     display: flex;
     align-items: center;
@@ -38,7 +39,7 @@ const ImageSection = styled.div`
         left: 0;
         right: 0;
         bottom: 0;
-        background: rgba(0, 0, 0, 0.3);
+        background: rgba(0, 0, 0, 0.4);
     }
 `
 
@@ -123,13 +124,16 @@ const StyledButton = styled(Button)`
     font-size: 16px;
     font-weight: 500;
     border-radius: 8px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #d5001c;
+    color: #fff;
     border: none;
+    box-shadow: 0 2px 8px rgba(213, 0, 28, 0.08);
 
-    &:hover {
-        background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    &:hover,
+    &:focus {
+        background: #e53935 !important;
+        color: #fff;
+        box-shadow: 0 2px 8px rgba(213, 0, 28, 0.12);
     }
 `
 
@@ -140,8 +144,8 @@ const StyledInput = styled(Input)`
 
     &:focus,
     &:hover {
-        border-color: #667eea;
-        box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+        border-color: #d5001c;
+        box-shadow: 0 0 0 2px rgba(213, 0, 28, 0.12);
     }
 `
 
@@ -152,8 +156,8 @@ const StyledPasswordInput = styled(Input.Password)`
 
     &:focus,
     &:hover {
-        border-color: #667eea;
-        box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+        border-color: #d5001c;
+        box-shadow: 0 0 0 2px rgba(213, 0, 28, 0.12);
     }
 `
 
@@ -161,6 +165,8 @@ const SignIn: React.FC = () => {
     const [loading, setLoading] = useState(false)
     const router = useRouter()
     const { addLog } = useAdminLog()
+    const { theme } = useTheme()
+    const isDarkMode = theme === "dark"
 
     const onFinish = async (values: any) => {
         setLoading(true)
@@ -227,7 +233,13 @@ const SignIn: React.FC = () => {
             <FormSection>
                 <LoginCard>
                     <LogoContainer>
-                        <Icons icon={<CompanyLogo />} width={60} height={60} />
+                        {/* <Icons icon={<CompanyLogo />} width={60} height={60} /> */}
+                        <Image
+                            src={isDarkMode ? "/images/logo-dark.png" : "/images/logo-light.png"}
+                            alt="Company Logo"
+                            width={60}
+                            height={60}
+                        />
                     </LogoContainer>
                     <div style={{ textAlign: "center", marginBottom: "2rem" }}>
                         <Title level={2} style={{ margin: 0, color: "#1a202c" }}>
