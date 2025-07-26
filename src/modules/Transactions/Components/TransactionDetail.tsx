@@ -42,14 +42,14 @@ const TransactionDetail: React.FC<TransactionDetailProps> = ({ data }) => {
                             }}
                         >
                             <Image
-                                src={data.baseFacePhoto}
+                                src={data.base_face}
                                 alt="Base Face"
                                 style={{ maxWidth: "100%", height: "auto" }}
                                 fallback={imgaePlaceHolder}
                             />
                         </Card>
                         <Card
-                            title={t("compare_face_photo")}
+                            title={t("face_compare_logs")}
                             style={{
                                 width: "100%",
                                 marginTop: 16,
@@ -57,7 +57,7 @@ const TransactionDetail: React.FC<TransactionDetailProps> = ({ data }) => {
                             }}
                         >
                             <Image
-                                src={data.compareFacePhoto}
+                                src={data.current_face}
                                 alt="Compare Face"
                                 style={{ maxWidth: "100%", height: "auto" }}
                                 fallback={imgaePlaceHolder}
@@ -77,24 +77,24 @@ const TransactionDetail: React.FC<TransactionDetailProps> = ({ data }) => {
                             columns={[
                                 {
                                     title: t("transaction_id"),
-                                    dataIndex: "transactionId",
-                                    key: "transactionId"
+                                    dataIndex: "trx_id",
+                                    key: "trx_id"
                                 },
                                 {
                                     title: t("zoloz_trx_id"),
-                                    dataIndex: "zolozTrxId",
-                                    key: "zolozTrxId"
+                                    dataIndex: "zoloz_trx_id",
+                                    key: "zoloz_trx_id"
                                 },
                                 {
                                     title: t("date_time"),
-                                    dataIndex: "dateTime",
-                                    key: "dateTime",
+                                    dataIndex: "created_at",
+                                    key: "created_at",
                                     render: (text: string) => formatDate(text, "DD MMM YYYY, HH:mm")
                                 },
                                 {
                                     title: t("cif"),
-                                    dataIndex: "cif",
-                                    key: "cif"
+                                    dataIndex: "user_id",
+                                    key: "user_id"
                                 },
                                 {
                                     title: t("channel"),
@@ -127,7 +127,7 @@ const TransactionDetail: React.FC<TransactionDetailProps> = ({ data }) => {
                         }}
                     >
                         <ReactJson
-                            src={data.zolozResultLog}
+                            src={data.zoloz_result_log}
                             name={false}
                             enableClipboard
                             collapsed={2}
