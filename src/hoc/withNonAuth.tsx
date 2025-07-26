@@ -15,7 +15,7 @@ export const withNonAuthSSR =
         if (auth.isLoggedIn) {
             return {
                 redirect: {
-                    destination: "/dashboard",
+                    destination: "/",
                     permanent: false
                 }
             }
