@@ -9,6 +9,8 @@
     "admin": "Admin",
     "admin_activity": "Admin Activity",
     "logs": "Logs",
+    "admin_logs": "Admin Logs",
+    "admin_list": "Admin List",
     "deposit": "Deposit",
     "withdraw": "Withdraw",
     "balance": "Balance",
@@ -29,6 +31,7 @@
     "admin_log": "Admin Log",
     "admin_settings": "Admin Settings",
     "admin_role": "Admin Role",
+    "add_admin": "Add Admin",
     "profile": "Profile",
     "profile_settings": "Profile Settings",
     "last_transaction_date": "Last Transaction Date",
@@ -82,5 +85,6 @@
     "zoloz_result_log": "Zoloz Result Log",
     "date_time": "Date & Time",
     "action": "Action",
-    "channel": "Channel"
+    "channel": "Channel",
+    "back": "Back"
 }

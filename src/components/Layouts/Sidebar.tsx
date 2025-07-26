@@ -61,12 +61,12 @@ const Sidebar: React.FC = () => {
             label: t("admin"),
             children: [
                 {
-                    key: "admin-log",
-                    label: <Link href="/admin/log">{t("admin_log")}</Link>
+                    key: "admin-settings",
+                    label: <Link href="/admin">{t("admin_list")}</Link>
                 },
                 {
-                    key: "admin-settings",
-                    label: <Link href="/admin/settings">{t("admin_settings")}</Link>
+                    key: "admin-log",
+                    label: <Link href="/admin/log">{t("admin_log")}</Link>
                 },
                 {
                     key: "role",

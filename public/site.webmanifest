@@ -22,6 +22,6 @@
     "theme_color": "#667eea",
     "background_color": "#ffffff",
     "display": "standalone",
-    "start_url": "/dashboard",
+    "start_url": "/",
     "scope": "/"
 }

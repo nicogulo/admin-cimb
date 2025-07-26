@@ -9,6 +9,9 @@
     "admin": "Admin",
     "admin_activity": "Aktivitas Admin",
     "logs": "Log",
+    "admin_logs": "Log Admin",
+    "admin_list": "Daftar Admin",
+    "add_admin": "Tambah Admin",
     "deposit": "Deposit",
     "withdraw": "Penarikan",
     "balance": "Saldo",
@@ -82,5 +85,6 @@
     "zoloz_trx_id": "ID Transaksi Zoloz",
     "date_time": "Tanggal & Waktu",
     "action": "Aksi",
-    "channel": "Saluran"
+    "channel": "Saluran",
+    "back": "Kembali"
 }

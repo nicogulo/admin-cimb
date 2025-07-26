@@ -1,7 +1,9 @@
-import { GetServerSideProps } from "next"
-import { serverSideTranslations } from "next-i18next/serverSideTranslations"
+import { withAuthSSR } from "@hoc/withAuth"
+import Logs from "@modules/Admin/Logs"
 
-import Dashboard from "@modules/Dashboard"
+import { GetServerSideProps } from "next"
+
+import { serverSideTranslations } from "next-i18next/serverSideTranslations"
 
 export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
     return {
@@ -11,4 +13,4 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
     }
 }
 
-export default Dashboard
+export default Logs

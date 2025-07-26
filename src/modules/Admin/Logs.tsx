@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react"
 import { useTranslation } from "next-i18next"
 import { Table, Tag } from "antd"
 
-import LayoutDashboard from "@components/Layouts/Dashboard"
+import LayoutDashboard from "@components/Layouts"
 
-const DashboardLogs: React.FC = () => {
+const Logs: React.FC = () => {
     const [adminLevel, setAdminLevel] = useState<number>(0)
     const { t } = useTranslation("common")
 
@@ -65,13 +65,10 @@ const DashboardLogs: React.FC = () => {
     ]
 
     return (
-        <LayoutDashboard adminLevel={adminLevel}>
-            <div style={{ padding: "24px" }}>
-                <h1>{t("logs")}</h1>
-                <Table columns={columns} dataSource={mockData} rowKey="key" />
-            </div>
+        <LayoutDashboard adminLevel={adminLevel} title={t("admin_logs")}>
+            <Table columns={columns} dataSource={mockData} pagination={false} />
         </LayoutDashboard>
     )
 }
 
-export default DashboardLogs
+export default Logs

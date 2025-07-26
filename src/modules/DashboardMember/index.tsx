@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { useTranslation } from "next-i18next"
 import { Button, Space, Table, Tag } from "antd"
 
-import LayoutDashboard from "@components/Layouts/Dashboard"
+import LayoutDashboard from "@components/Layouts"
 import { API_URL } from "@config/config"
 import useAuth from "@hooks/useAuth"
 import { formatDate } from "@utils/date"

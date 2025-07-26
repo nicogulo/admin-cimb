@@ -198,7 +198,7 @@ const SignIn: React.FC = () => {
                 })
 
                 message.success("Sign in successful!")
-                router.push("/dashboard")
+                router.push("/")
             } else {
                 throw new Error(res?.message || "Sign in failed")
             }

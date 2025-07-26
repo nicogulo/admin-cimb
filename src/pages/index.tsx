@@ -2,17 +2,18 @@ import { useEffect } from "react"
 import { GetStaticProps } from "next"
 import { useRouter } from "next/router"
 import { serverSideTranslations } from "next-i18next/serverSideTranslations"
+import Home from "@modules/Home"
 
-export default function Home() {
-    const router = useRouter()
+// export default function Home() {
+//     const router = useRouter()
 
-    useEffect(() => {
-        // Redirect to dashboard with locale
-        router.replace("/dashboard")
-    }, [router])
+//     useEffect(() => {
+//         // Redirect to dashboard with locale
+//         router.replace("/dashboard")
+//     }, [router])
 
-    return null
-}
+//     return null
+// }
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
     return {
@@ -21,3 +22,5 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
         }
     }
 }
+
+export default Home

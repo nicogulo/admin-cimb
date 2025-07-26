@@ -3,10 +3,10 @@ import { useRouter } from "next/router"
 import { useTranslation } from "next-i18next"
 import { Card, theme } from "antd"
 
-import LayoutDashboard from "@components/Layouts/Dashboard"
 import useAuth from "@hooks/useAuth"
 import Icons from "@icons/icon"
 import IconNotificationRing from "@icons/Images/NotificationRing"
+import LayoutDashboard from "@components/Layouts"
 
 const ClockAPI = () => {
     const [dateState, setDateState] = useState(new Date())
@@ -32,7 +32,7 @@ const ClockAPI = () => {
     )
 }
 
-const Dashboard: React.FC = () => {
+const Home: React.FC = () => {
     const { t } = useTranslation("common")
     const router = useRouter()
 
@@ -84,4 +84,4 @@ const Dashboard: React.FC = () => {
     )
 }
 
-export default Dashboard
+export default Home

@@ -11,8 +11,8 @@ export default function Custom404() {
         // Check if user is logged in
         const adminData = localStorage.getItem("admin")
         if (adminData) {
-            // User is logged in, go to dashboard
-            router.push("/dashboard")
+            // User is logged in, go to
+            router.push("")
         } else {
             // User is not logged in, go to auth page
             router.push("/auth/sign-in")
