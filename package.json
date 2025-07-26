@@ -21,6 +21,7 @@
         "@emotion/react": "^11.13.3",
         "@emotion/styled": "^11.13.0",
         "@progress/kendo-react-pdf": "^8.5.0",
+        "@verihubs/liveness": "file:public/liveness",
         "antd": "^5.21.4",
         "axios": "^1.7.9",
         "bignumber.js": "^9.1.2",

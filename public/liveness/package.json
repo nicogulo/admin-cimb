@@ -1,0 +1,8 @@
+{
+  "name": "@verihubs/liveness",
+  "version": "1.8.0",
+  "description": "Verihubs Liveness Integration.",
+  "main": "./builder.js",
+  "types": "./builder.d.ts",
+  "author": "Verihubs"
+}
