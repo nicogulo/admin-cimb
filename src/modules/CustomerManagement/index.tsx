@@ -25,92 +25,27 @@ import CustomerDetail from "./Components/CustomerDetail"
 const { RangePicker } = DatePicker
 
 interface CustomerData {
-    key: string
     cif: string
-    lastTransactionDate: string
     name: string
-    lastTransactionChannel: string
+    last_transaction_date: string
+    last_transaction_channel: string
     status: string
-    phoneNumber: string
-    dateOfBirth: string
-    baseFacePhoto: string
-    currentFacePhoto: string
-    logs: {
-        trxId: string
-        baseFace: string
-        currentFace: string
-        cif: string
-        channel: string
-        dateTime: string
-        status: string
-        action: string
-    }[]
 }
 
 const dataDummy = [
     {
-        key: "1",
-        cif: "1234567890",
-        lastTransactionDate: "2025-07-22",
-        name: "John Doe",
-        lastTransactionChannel: "Mobile App",
-        status: "Active",
-        phoneNumber: "08123456789",
-        dateOfBirth: "1990-01-01",
-        baseFacePhoto: "/images/base-face.jpg",
-        currentFacePhoto: "/images/current-face.jpg",
-        logs: [
-            {
-                trxId: "TRX123456",
-                zoloTrxId: "Zoloz123456",
-                zoloResultLog: { result: "Success", details: "Face match successful" },
-                baseFace: "BaseFace1",
-                currentFace: "CurrentFace1",
-                cif: "1234567890",
-                channel: "Mobile App",
-                dateTime: "2023-10-01 12:00:00",
-                status: "Success",
-                action: "Registration"
-            },
-            {
-                trxId: "TRX123457",
-                zoloTrxId: "Zoloz123457",
-                zoloResultLog: { result: "Failed", details: "Face match failed" },
-                baseFace: "BaseFace2",
-                currentFace: "CurrentFace2",
-                cif: "1234567890",
-                channel: "Web Portal",
-                dateTime: "2023-10-02 14:30:00",
-                status: "Failed",
-                action: "Forget Password"
-            }
-        ]
+        cif: "CIF12345678",
+        name: "Siti Rahmawati",
+        last_transaction_date: "2025-07-26T08:56:02Z",
+        last_transaction_channel: "Octo",
+        status: "Success"
     },
     {
-        key: "2",
-        cif: "0987654321",
-        lastTransactionDate: "2025-07-21",
-        name: "Jane Smith",
-        lastTransactionChannel: "Web Portal",
-        status: "Inactive",
-        phoneNumber: "08234567890",
-        dateOfBirth: "1985-05-05",
-        baseFacePhoto: "/images/base-face.jpg",
-        currentFacePhoto: "/images/current-face.jpg",
-        logs: [
-            {
-                trxId: "TRX098765",
-                zoloTrxId: "Zoloz123456",
-                zoloResultLog: { result: "Success", details: "Face match successful" },
-                baseFace: "BaseFace3",
-                currentFace: "CurrentFace3",
-                cif: "0987654321",
-                channel: "Web Portal",
-                dateTime: "2023-09-15 10:00:00",
-                status: "Success",
-                action: "Registration"
-            }
-        ]
+        cif: "CIF98765432",
+        name: "Budi Santoso",
+        last_transaction_date: "2025-07-25T17:33:45Z",
+        last_transaction_channel: "eTP",
+        status: "Failed"
     }
 ]
 
@@ -170,25 +105,25 @@ const Dashboard: React.FC = () => {
     const filteredData = dataDummy.filter((item) => {
         let match = true
         if (searchCif && !item.cif.includes(searchCif)) match = false
-        if (channel && item.lastTransactionChannel !== channel) match = false
+        if (channel && item.last_transaction_channel !== channel) match = false
         if (status && item.status !== status) match = false
         // Date filter
         if (dateFilter === "24hr") {
             // last 24 hours
             const now = new Date()
-            const itemDate = new Date(item.lastTransactionDate)
+            const itemDate = new Date(item.last_transaction_date)
             if ((now.getTime() - itemDate.getTime()) / (1000 * 60 * 60) > 24) match = false
         } else if (dateFilter === "7days") {
             const now = new Date()
-            const itemDate = new Date(item.lastTransactionDate)
+            const itemDate = new Date(item.last_transaction_date)
             if ((now.getTime() - itemDate.getTime()) / (1000 * 60 * 60 * 24) > 7) match = false
         } else if (dateFilter === "30days") {
             const now = new Date()
-            const itemDate = new Date(item.lastTransactionDate)
+            const itemDate = new Date(item.last_transaction_date)
             if ((now.getTime() - itemDate.getTime()) / (1000 * 60 * 60 * 24) > 30) match = false
         } else if (dateFilter === "custom" && customRange) {
             const [start, end] = customRange
-            const itemDate = new Date(item.lastTransactionDate)
+            const itemDate = new Date(item.last_transaction_date)
 
             if (start && end) {
                 const startDate = new Date(start)
@@ -209,22 +144,18 @@ const Dashboard: React.FC = () => {
         const worksheet = workbook.addWorksheet("Customer Data")
         worksheet.columns = [
             { header: "CIF", key: "cif", width: 15 },
-            { header: "Last Transaction Date", key: "lastTransactionDate", width: 20 },
+            { header: "Last Transaction Date", key: "last_transaction_date", width: 20 },
             { header: "Name", key: "name", width: 20 },
-            { header: "Last Transaction Channel", key: "lastTransactionChannel", width: 20 },
-            { header: "Status", key: "status", width: 12 },
-            { header: "Phone Number", key: "phoneNumber", width: 15 },
-            { header: "Date of Birth", key: "dateOfBirth", width: 15 }
+            { header: "Last Transaction Channel", key: "last_transaction_channel", width: 20 },
+            { header: "Status", key: "status", width: 12 }
         ]
         filteredData.forEach((row) => {
             worksheet.addRow({
                 cif: row.cif,
-                lastTransactionDate: formatDate(row.lastTransactionDate, "DD MMM YYYY, HH:mm"),
+                last_transaction_date: formatDate(row.last_transaction_date, "DD MMM YYYY, HH:mm"),
                 name: row.name,
-                lastTransactionChannel: row.lastTransactionChannel,
-                status: row.status,
-                phoneNumber: row.phoneNumber,
-                dateOfBirth: row.dateOfBirth
+                last_transaction_channel: row.last_transaction_channel,
+                status: row.status
             })
         })
 
@@ -255,8 +186,8 @@ const Dashboard: React.FC = () => {
         },
         {
             title: t("last_transaction_date"),
-            dataIndex: "lastTransactionDate",
-            key: "lastTransactionDate",
+            dataIndex: "last_transaction_date",
+            key: "last_transaction_date",
             render: (text: string) => formatDate(text, "DD MMM YYYY HH:mm")
         },
         {
@@ -266,8 +197,8 @@ const Dashboard: React.FC = () => {
         },
         {
             title: t("last_transaction_channel"),
-            dataIndex: "lastTransactionChannel",
-            key: "lastTransactionChannel",
+            dataIndex: "last_transaction_channel",
+            key: "last_transaction_channel",
             render: (text: string) => text || t("unknown_channel")
         },
         {
@@ -275,7 +206,7 @@ const Dashboard: React.FC = () => {
             dataIndex: "status",
             key: "status",
             align: "center" as const,
-            render: (text: string) => <Tag color={text === "Active" ? "green" : "red"}>{text}</Tag>
+            render: (text: string) => <Tag color={text === "Success" ? "green" : "red"}>{text}</Tag>
         },
         {
             title: "•••",
