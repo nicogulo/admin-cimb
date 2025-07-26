@@ -51,7 +51,6 @@ const AddAdmin = () => {
                 okButtonProps={{ loading: isLoading, disabled: isLoading }}
                 okText={t("add_admin")}
             >
-                {/* <AddAdminForm onClose={() => setShowAddAdminModal(false)} /> */}
                 <Form
                     form={form}
                     labelAlign="left"

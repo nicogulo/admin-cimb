@@ -15,43 +15,124 @@ const { RangePicker } = DatePicker
 
 const dummyData = [
     {
-        transactionId: "TRX123456",
-        cif: "CIF123456",
-        channel: "Octo",
-        action: "Registration",
-        status: "Success",
-        id: "1",
-        dateTime: "2025-07-01 12:00:00",
-        zolozTrxId: "Z123456789",
-        zolozResultLog: { result: "success", details: "Face match successful" },
-        baseFacePhoto: "/images/base-face.jpg",
-        compareFacePhoto: "/images/compare-face.jpg"
-    },
-    {
-        transactionId: "TRX654321",
-        cif: "CIF654321",
+        trx_id: 201,
+        base_face: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD...",
+        current_face: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD...",
+        user_id: "CIF99887766",
         channel: "SSB",
-        action: "Forget Password",
-        status: "Failed",
-        id: "2",
-        dateTime: "2025-07-02 14:30:00",
-        zolozTrxId: "Z987654321",
-        zolozResultLog: { result: "failed", details: "Face match failed" },
-        baseFacePhoto: "/images/base-face.jpg",
-        compareFacePhoto: "/images/compare-face.jpg"
+        date_time: "2025-07-26T08:56:02.000Z",
+        status: "Success",
+        action: "Forget Email",
+        zoloz_trx_id: "cee237de-10aa-43d9-a8a3-f2d63a1684b1",
+        zoloz_result_log: {
+            success: true,
+            message: "Face valid",
+            data: {
+                message: "Request Success",
+                session_id: "cee237de-10aa-43d9-a8a3-f2d63a1684b1",
+                timestamp: 1753545362,
+                status_code: "FACE-14",
+                bounding_box: {
+                    TopLeftX: "65.17205",
+                    TopLeftY: "55.80445",
+                    BottomRightX: "153.9487",
+                    BottomRightY: "177.46924",
+                    Width: "88.77664",
+                    Height: "121.664795"
+                },
+                face_landmark: {
+                    LeftEyeX: "85.13355",
+                    LeftEyeY: "101.073456",
+                    RightEyeX: "125.70785",
+                    RightEyeY: "101.073456",
+                    NoseX: "108.31886",
+                    NoseY: "139.11185",
+                    MouthLeftX: "91.29215",
+                    MouthLeftY: "150.7045",
+                    MouthRightX: "123.89649",
+                    MouthRightY: "151.06677"
+                },
+                rotation: 0,
+                nface: 1,
+                attributes: {
+                    sunglasses_on: false,
+                    veil_on: false,
+                    mask_on: false,
+                    hat_on: false
+                },
+                image_quality: {
+                    blur: false,
+                    dark: false
+                },
+                liveness: {
+                    status: true,
+                    probability: "100"
+                }
+            },
+            timestamp: "2025-07-26T08:56:01.781479369Z"
+        },
+        created_at: "2025-07-26T08:56:02.000Z",
+        updated_at: "2025-07-26T08:56:02.000Z"
     },
     {
-        transactionId: "TRX789012",
-        cif: "CIF789012",
-        channel: "eTP",
-        action: "Forget Email",
-        status: "Success",
-        id: "3",
-        dateTime: "2025-07-03 16:45:00",
-        zolozTrxId: "Z789012345",
-        zolozResultLog: { result: "success", details: "Face match successful" },
-        baseFacePhoto: "/images/base-face.jpg",
-        compareFacePhoto: "/images/compare-face.jpg"
+        trx_id: 202,
+        base_face: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD...",
+        current_face: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD...",
+        user_id: "CIF99887766",
+        channel: "SSB",
+        date_time: "2025-07-26T08:56:02.000Z",
+        status: "Failed",
+        action: "Registration",
+        zoloz_trx_id: "cee237de-10aa-43d9-a8a3-f2d63a1684b1",
+        zoloz_result_log: {
+            success: false,
+            message: "Face invalid",
+            data: {
+                message: "Request Failed",
+                session_id: "cee237de-10aa-43d9-a8a3-f2d63a1684b1",
+                timestamp: 1753545362,
+                status_code: "FACE-14",
+                bounding_box: {
+                    TopLeftX: "65.17205",
+                    TopLeftY: "55.80445",
+                    BottomRightX: "153.9487",
+                    BottomRightY: "177.46924",
+                    Width: "88.77664",
+                    Height: "121.664795"
+                },
+                face_landmark: {
+                    LeftEyeX: "85.13355",
+                    LeftEyeY: "101.073456",
+                    RightEyeX: "125.70785",
+                    RightEyeY: "101.073456",
+                    NoseX: "108.31886",
+                    NoseY: "139.11185",
+                    MouthLeftX: "91.29215",
+                    MouthLeftY: "150.7045",
+                    MouthRightX: "123.89649",
+                    MouthRightY: "151.06677"
+                },
+                rotation: 0,
+                nface: 1,
+                attributes: {
+                    sunglasses_on: false,
+                    veil_on: false,
+                    mask_on: false,
+                    hat_on: false
+                },
+                image_quality: {
+                    blur: true,
+                    dark: false
+                },
+                liveness: {
+                    status: false,
+                    probability: "0"
+                }
+            },
+            timestamp: "2025-07-26T08:56:01.781479369Z"
+        },
+        created_at: "2025-07-26T08:56:02.000Z",
+        updated_at: "2025-07-26T08:56:02.000Z"
     }
 ]
 const Transaction = () => {
@@ -65,24 +146,24 @@ const Transaction = () => {
     const filteredData = dummyData.filter((item) => {
         let matches = true
         if (searchCif) {
-            matches = matches && item.cif.includes(searchCif)
+            matches = matches && item.user_id.includes(searchCif)
         }
         if (dateFilter === "24hr") {
             // last 24 hours
             const now = new Date()
-            const itemDate = new Date(item.dateTime)
+            const itemDate = new Date(item.created_at)
             if ((now.getTime() - itemDate.getTime()) / (1000 * 60 * 60) > 24) matches = false
         } else if (dateFilter === "7days") {
             const now = new Date()
-            const itemDate = new Date(item.dateTime)
+            const itemDate = new Date(item.created_at)
             if ((now.getTime() - itemDate.getTime()) / (1000 * 60 * 60 * 24) > 7) matches = false
         } else if (dateFilter === "30days") {
             const now = new Date()
-            const itemDate = new Date(item.dateTime)
+            const itemDate = new Date(item.created_at)
             if ((now.getTime() - itemDate.getTime()) / (1000 * 60 * 60 * 24) > 30) matches = false
         } else if (dateFilter === "custom" && customRange) {
             const [start, end] = customRange
-            const itemDate = new Date(item.dateTime)
+            const itemDate = new Date(item.created_at)
 
             if (start && end) {
                 const startDate = new Date(start)
@@ -121,11 +202,11 @@ const Transaction = () => {
 
         filteredData.forEach((item) => {
             worksheet.addRow({
-                transactionId: item.transactionId,
-                dateTime: formatDate(item.dateTime, "DD MMM YYYY, HH:mm"),
-                zolozTrxId: item.zolozTrxId,
+                transactionId: item.trx_id,
+                dateTime: formatDate(item.created_at, "DD MMM YYYY, HH:mm"),
+                zolozTrxId: item.zoloz_trx_id,
                 action: item.action,
-                cif: item.cif,
+                cif: item.user_id,
                 channel: item.channel,
                 status: item.status
             })
