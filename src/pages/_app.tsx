@@ -6,12 +6,16 @@ import AntdStyleRegistry from "@utils/style-registry/antd"
 import EmotionStyleRegistry from "@utils/style-registry/emotion"
 
 import "@styles/globals.css"
+import Head from "next/head"
 
 const App = ({ Component, pageProps }: AppProps) => {
     return (
         <AntdStyleRegistry>
             <EmotionStyleRegistry>
                 <ThemesProvider>
+                    <Head>
+                        <title>CIMB Admin Dashboard</title>
+                    </Head>
                     <Component {...pageProps} />
                 </ThemesProvider>
             </EmotionStyleRegistry>
