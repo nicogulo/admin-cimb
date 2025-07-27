@@ -1,13 +1,14 @@
+/* eslint-disable radix */
+
 "use client"
 
 import React, { useEffect } from "react"
 import { useRouter } from "next/router"
 import { message } from "antd"
 
-import { API_URL } from "@config/config"
 import { getAuth, resetAuth, setAuth } from "@utils/auth"
 
-import dayjs from "dayjs"
+import useRedirectURL from "./useRedirectURL"
 
 const useAuth = () => {
     const windowExpired = React.useRef(false)
@@ -64,6 +65,7 @@ const useAuth = () => {
                 })
 
                 countdownTimeout.current = setInterval(() => {
+                    // eslint-disable-next-line no-plusplus
                     countdown.current--
                     const cdEl = document.getElementById("countdown-session")
                     if (cdEl) cdEl.innerText = countdown.current.toString()
@@ -170,6 +172,7 @@ const useAuth = () => {
             if (idleTimeout) clearInterval(idleTimeout)
             if (countdownTimeout.current) clearInterval(countdownTimeout.current)
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     return {
@@ -186,20 +189,20 @@ interface LoginPayload {
     password: string
 }
 
-interface RegisterPayload {
-    full_name: string
-    phone_number: string
-    email: string
-    password: string
-}
+// interface RegisterPayload {
+//     full_name: string
+//     phone_number: string
+//     email: string
+//     password: string
+// }
 
-interface OtpPayload {
-    otp: string
-}
+// interface OtpPayload {
+//     otp: string
+// }
 
 export const useLogin = () => {
     const router = useRouter()
-    const redirect = router.query.redirect as string
+    const redirect = useRedirectURL()
 
     const handleLogin = async (payload: LoginPayload) => {
         try {
@@ -230,7 +233,8 @@ export const useLogin = () => {
                 localStorage.setItem("email", payload.email)
                 localStorage.setItem("password", payload.password)
                 message.success("Sign in successful!")
-                router.push(redirect || "/")
+                router.replace(redirect || "/")
+                console.log("Login successful:", redirect)
                 return res
             }
 
@@ -244,10 +248,11 @@ export const useLogin = () => {
     useEffect(() => {
         if (redirect) {
             router.prefetch(redirect, redirect)
+            return
         }
 
         router.prefetch("/")
-    }, [router, redirect])
+    }, [redirect, router])
 
     return {
         login: handleLogin

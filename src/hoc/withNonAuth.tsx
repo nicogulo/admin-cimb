@@ -2,11 +2,11 @@
 import { useEffect } from "react"
 import { GetServerSideProps, GetServerSidePropsContext } from "next"
 import { useRouter } from "next/router"
+import { useTranslation } from "next-i18next"
 
 import useAuth from "@hooks/useAuth"
-import { getAuth } from "@utils/auth"
-import { useTranslation } from "next-i18next"
 import useRedirectURL from "@hooks/useRedirectURL"
+import { getAuth } from "@utils/auth"
 
 export const withNonAuthSSR =
     (getServerSidePropsFunc: GetServerSideProps) => async (context: GetServerSidePropsContext) => {

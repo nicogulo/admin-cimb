@@ -1,20 +1,23 @@
-import LayoutDashboard from "@components/Layouts"
-import { Button, DatePicker, Input, message, Select, Space, Table, Tag } from "antd"
+import React, { useEffect, useMemo, useState } from "react"
 import { useTranslation } from "next-i18next"
-import React, { useEffect, useState } from "react"
-import TransactionDetail from "./Components/TransactionDetail"
+import { Button, DatePicker, Input, message, Select, Space, Table, Tag, Tooltip } from "antd"
 import { channelOptions, dateOptions, statusOptions } from "const/optionsFilter"
-import { formatDate } from "@utils/date"
+import dayjs from "dayjs"
+import debounce from "lodash/debounce"
+
 import { ExportOutlined } from "@ant-design/icons"
+import LayoutDashboard from "@components/Layouts"
 import { API_URL } from "@config/config"
 import useAuth from "@hooks/useAuth"
-import dayjs from "dayjs"
+import { formatDate } from "@utils/date"
+
+import TransactionDetail from "./Components/TransactionDetail"
 
 const { RangePicker } = DatePicker
 
 const Transaction = () => {
     const { t } = useTranslation("common")
-    const [data, setData] = useState<TransactionData[]>([])
+    const [dataTransaction, setDataTransaction] = useState<TransactionData[]>([])
     const [searchCif, setSearchCif] = useState<string | undefined>()
     const [dateFilter, setDateFilter] = useState<string | undefined>()
     const [customRange, setCustomRange] = useState<any>(null)
@@ -64,71 +67,35 @@ const Transaction = () => {
                 }
             )
             const { data } = await res.json()
-            if (data?.transactions) {
-                const transactions = data.transactions.map((item: any) => ({
-                    id: item.id,
-                    cif: item.cif,
-                    channel: item.channel,
-                    date_time: item.date_time,
-                    action: item.action,
-                    status: item.status ? "Success" : "Failed",
-                    zoloz_trx_id: item.zoloz_trx_id,
-                    zoloz_result_log: JSON.stringify(item.zoloz_result_log, null, 2),
-                    created_at: item.created_at
-                }))
-                setData(transactions)
-                setPagination({
-                    current: page,
-                    pageSize: limit,
-                    total: data.total
-                })
-            }
+            const transactions = (data?.transactions || []).map((item: any) => ({
+                id: item.id,
+                cif: item.cif,
+                channel: item.channel,
+                date_time: item.date_time,
+                action: item.action,
+                status: item.status ? "Success" : "Failed",
+                zoloz_trx_id: item.zoloz_trx_id,
+                zoloz_result_log: JSON.stringify(item.zoloz_result_log, null, 2),
+                created_at: item.created_at
+            }))
+            setDataTransaction(transactions)
+            setPagination({
+                current: page,
+                pageSize: limit,
+                total: data?.total || 0
+            })
         } catch (error) {
             message.error("Error fetching transaction data")
         }
     }
 
-    const filteredData = data.filter((item) => {
-        let matches = true
-        if (searchCif) {
-            matches = matches && item.cif.includes(searchCif)
-        }
-        if (dateFilter === "24hr") {
-            // last 24 hours
-            const now = new Date()
-            const itemDate = new Date(item.created_at)
-            if ((now.getTime() - itemDate.getTime()) / (1000 * 60 * 60) > 24) matches = false
-        } else if (dateFilter === "7days") {
-            const now = new Date()
-            const itemDate = new Date(item.created_at)
-            if ((now.getTime() - itemDate.getTime()) / (1000 * 60 * 60 * 24) > 7) matches = false
-        } else if (dateFilter === "30days") {
-            const now = new Date()
-            const itemDate = new Date(item.created_at)
-            if ((now.getTime() - itemDate.getTime()) / (1000 * 60 * 60 * 24) > 30) matches = false
-        } else if (dateFilter === "custom" && customRange) {
-            const [start, end] = customRange
-            const itemDate = new Date(item.created_at)
-
-            if (start && end) {
-                const startDate = new Date(start)
-                startDate.setHours(0, 0, 0, 0)
-                const endDate = new Date(end)
-                endDate.setHours(23, 59, 59, 999)
-                if (itemDate < startDate || itemDate > endDate) matches = false
-            }
-        } else if (dateFilter === "") {
-            // No date filter selected, do not filter by date
-        }
-        if (channel) {
-            matches = matches && item.channel === channel
-        }
-        if (status) {
-            matches = matches && item.status === status
-        }
-        return matches
-    })
-
+    const handleSearch = useMemo(
+        () =>
+            debounce((searchValue: string) => {
+                setSearchCif(searchValue)
+            }, 1000),
+        []
+    )
     const handleExport = async () => {
         // Implement export logic here, e.g., convert filteredData to CSV and trigger download
         const Excel = await import("exceljs")
@@ -145,7 +112,7 @@ const Transaction = () => {
             { header: t("status"), key: "status" }
         ]
 
-        filteredData.forEach((item) => {
+        dataTransaction.forEach((item) => {
             worksheet.addRow({
                 transactionId: item.id,
                 dateTime: formatDate(item.created_at, "DD MMM YYYY, HH:mm"),
@@ -185,7 +152,31 @@ const Transaction = () => {
         {
             title: t("transaction_id"),
             dataIndex: "id",
-            key: "id"
+            key: "id",
+            ellipsis: true,
+            render: (url: string) => (
+                <Tooltip title={`Click to copy URL ${url}`}>
+                    <Button
+                        type="text"
+                        onClick={() => {
+                            navigator.clipboard.writeText(url)
+                            message.success("URL Copied")
+                        }}
+                        size="small"
+                    >
+                        <span
+                            style={{
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap",
+                                width: "180px"
+                            }}
+                        >
+                            {url}
+                        </span>
+                    </Button>
+                </Tooltip>
+            )
         },
         {
             title: t("cif"),
@@ -196,7 +187,36 @@ const Transaction = () => {
         {
             title: t("zoloz_trx_id"),
             dataIndex: "zoloz_trx_id",
-            key: "zoloz_trx_id"
+            key: "zoloz_trx_id",
+            ellipsis: true,
+            render: (url: string) => {
+                if (!url) {
+                    return <span>-</span>
+                }
+                return (
+                    <Tooltip title={`Click to copy URL ${url}`}>
+                        <Button
+                            type="text"
+                            onClick={() => {
+                                navigator.clipboard.writeText(url)
+                                message.success("URL Copied")
+                            }}
+                            size="small"
+                        >
+                            <span
+                                style={{
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    whiteSpace: "nowrap",
+                                    width: "180px"
+                                }}
+                            >
+                                {url}
+                            </span>
+                        </Button>
+                    </Tooltip>
+                )
+            }
         },
 
         {
@@ -229,7 +249,9 @@ const Transaction = () => {
 
     useEffect(() => {
         getData({ limit: pagination.pageSize, page: pagination.current })
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [pagination.current, pagination.pageSize, searchCif, dateFilter, customRange, channel, status])
+
     return (
         <LayoutDashboard title={t("transactions")}>
             <>
@@ -237,8 +259,7 @@ const Transaction = () => {
                     <Input.Search
                         placeholder={t("search_cif")}
                         allowClear
-                        value={searchCif}
-                        onChange={(e) => setSearchCif(e.target.value)}
+                        onChange={(e) => handleSearch(e.target.value)}
                     />
                     <Select
                         placeholder="Transaction Date"
@@ -279,14 +300,14 @@ const Transaction = () => {
                         icon={<ExportOutlined />}
                         onClick={handleExport}
                         style={{ marginLeft: "auto" }}
-                        disabled={filteredData.length === 0}
+                        disabled={dataTransaction.length === 0}
                     >
                         {t("export")}
                     </Button>
                 </Space>
                 <Table
                     columns={columns}
-                    dataSource={filteredData}
+                    dataSource={dataTransaction}
                     pagination={{ pageSize: 10, position: ["bottomCenter"] }}
                 />
             </>

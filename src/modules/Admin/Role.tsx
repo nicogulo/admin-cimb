@@ -1,7 +1,8 @@
-import LayoutDashboard from "@components/Layouts"
-import { Table } from "antd"
-import { useTranslation } from "next-i18next"
 import React from "react"
+import { Table } from "antd"
+
+import LayoutDashboard from "@components/Layouts"
+
 import AddRole from "./Components/AddRole"
 import EditRole from "./Components/EditRole"
 
@@ -19,8 +20,6 @@ const dataDummy = [
 ]
 
 const Role = () => {
-    const { t } = useTranslation("common")
-
     const columns = [
         {
             title: "Name",

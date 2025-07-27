@@ -1,6 +1,6 @@
-import { Button, Form, Input, Modal, Select } from "antd"
-import { useTranslation } from "next-i18next"
 import React, { useState } from "react"
+import { useTranslation } from "next-i18next"
+import { Button, Form, Input, Modal, Select } from "antd"
 
 const AddAdmin = () => {
     const [form] = Form.useForm()

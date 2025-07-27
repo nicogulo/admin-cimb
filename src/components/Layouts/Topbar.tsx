@@ -1,16 +1,14 @@
 import React, { useState } from "react"
-import { LoginOutlined } from "@ant-design/icons"
-
-import { useTheme } from "next-themes"
-import { theme as antdTheme, Button, MenuProps } from "antd"
-import Icons from "@icons/icon"
-import IconSun from "@icons/Images/Sun"
-import IconMoon from "@icons/Images/Moon"
-import IconLaptop from "@icons/Images/Laptop"
-import { Dropdown } from "antd"
 import { useTranslation } from "next-i18next"
-import useAuth, { useLogout } from "@hooks/useAuth"
+import { useTheme } from "next-themes"
+import { Button, Dropdown, MenuProps, theme as antdTheme } from "antd"
 import { Else, If, Then } from "react-if"
+
+import { LoginOutlined } from "@ant-design/icons"
+import useAuth, { useLogout } from "@hooks/useAuth"
+import Icons from "@icons/icon"
+import IconMoon from "@icons/Images/Moon"
+import IconSun from "@icons/Images/Sun"
 
 const ThemeToggle = () => {
     const { setTheme, theme } = useTheme()
@@ -73,7 +71,6 @@ const ThemeToggle = () => {
 }
 
 const DashboardTopbar: React.FC = () => {
-    const { setTheme, theme } = useTheme()
     const { token } = antdTheme.useToken()
     const [isLoading, setLoading] = useState(false)
 
@@ -90,44 +87,6 @@ const DashboardTopbar: React.FC = () => {
         setLoading(false)
     }
 
-    const themeOptions = [
-        {
-            key: "light",
-            icon: <Icons icon={<IconSun />} width={18} height={18} />,
-            label: "Terang"
-        },
-        {
-            key: "dark",
-            icon: <Icons icon={<IconMoon />} width={18} height={18} />,
-            label: "Gelap"
-        },
-        {
-            key: "system",
-            icon: <Icons icon={<IconLaptop />} width={18} height={18} />,
-            label: "Sistem"
-        }
-    ]
-    const themeDropdownItems = themeOptions.map((opt) => ({
-        key: opt.key,
-        label: (
-            <div
-                onClick={() => setTheme(opt.key)}
-                style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 8,
-                    padding: "6px 12px",
-                    cursor: "pointer",
-                    background: theme === opt.key ? token.colorPrimaryActive : "",
-                    color: theme === opt.key ? "#fff" : token.colorText,
-                    borderRadius: 6
-                }}
-            >
-                {opt.icon}
-                <span>{opt.label}</span>
-            </div>
-        )
-    }))
     return (
         <div
             style={{
@@ -142,7 +101,7 @@ const DashboardTopbar: React.FC = () => {
                 minHeight: 56,
                 position: "sticky",
                 top: 0,
-                zIndex: 10
+                zIndex: 5
             }}
         >
             {/* LocaleSwitcher & ThemeSwitcher hidden for now */}

@@ -12,7 +12,6 @@ import DashboardFooter from "@components/Layouts/Footer"
 import Sidebar from "@components/Layouts/Sidebar"
 import Topbar from "@components/Layouts/Topbar"
 import { WithThemes } from "@components/ThemesProvider"
-import styled from "@emotion/styled"
 
 type LayoutProps = {
     children?: React.ReactNode

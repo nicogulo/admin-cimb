@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react"
 import { useTranslation } from "next-i18next"
 import { Button, Popconfirm, Space, Table, Tag } from "antd"
 
+import { DeleteOutlined } from "@ant-design/icons"
 import LayoutDashboard from "@components/Layouts"
 import { API_URL } from "@config/config"
 import useAuth from "@hooks/useAuth"
 import { formatDate } from "@utils/date"
-import EditAdmin from "./Components/EditAdmin"
-import { DeleteOutlined } from "@ant-design/icons"
+
 import AddAdmin from "./Components/AddAdmin"
+import EditAdmin from "./Components/EditAdmin"
 
 const dataDummy = [
     {
@@ -36,7 +37,6 @@ const Admin: React.FC = () => {
     const { isLoggedIn } = auth
     const { t } = useTranslation("common")
 
-    const [showAddAdminModal, setShowAddAdminModal] = useState(false)
     const [loading, setLoading] = useState(false)
     const [dataAdmin, setDataAdmin] = useState(dataDummy)
     const [pagination, setPagination] = useState<any>({

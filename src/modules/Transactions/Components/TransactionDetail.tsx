@@ -1,12 +1,12 @@
-import { MenuUnfoldOutlined } from "@ant-design/icons"
-import { formatDate } from "@utils/date"
-import { Button, Card, Drawer, Flex, Image, Table, Tag } from "antd"
-import { useTranslation } from "next-i18next"
 import React, { useState } from "react"
-
 import dynamic from "next/dynamic"
+import { useTranslation } from "next-i18next"
+import { Button, Card, Drawer, Flex, Image, Table, Tag } from "antd"
 import { imgaePlaceHolder } from "const/image-place-holder"
 import { When } from "react-if"
+
+import { MenuUnfoldOutlined } from "@ant-design/icons"
+import { formatDate } from "@utils/date"
 
 const ReactJson = dynamic(() => import("react-json-view"), { ssr: false })
 
@@ -90,7 +90,8 @@ const TransactionDetail: React.FC<TransactionDetailProps> = ({ data }) => {
                                 {
                                     title: t("zoloz_trx_id"),
                                     dataIndex: "zoloz_trx_id",
-                                    key: "zoloz_trx_id"
+                                    key: "zoloz_trx_id",
+                                    render: (text: string) => <span>{text || "-"}</span>
                                 },
                                 {
                                     title: t("date_time"),
@@ -125,29 +126,31 @@ const TransactionDetail: React.FC<TransactionDetailProps> = ({ data }) => {
                             scroll={{ x: "max-content" }}
                         />
                     </Card>
-                    <Card
-                        title={t("zoloz_result_log")}
-                        style={{
-                            width: "100%",
-                            marginTop: 16,
-                            textAlign: "center"
-                        }}
-                    >
-                        <ReactJson
-                            src={parsed ? parsed : {}}
-                            name={false}
-                            enableClipboard
-                            collapsed={2}
-                            displayDataTypes={false}
+                    <When condition={parsed && Object.keys(parsed).length > 0}>
+                        <Card
+                            title={t("zoloz_result_log")}
                             style={{
-                                fontSize: 13,
-                                textAlign: "left",
-                                backgroundColor: "#fff",
-                                padding: "12px",
-                                fontFamily: "monospace"
+                                width: "100%",
+                                textAlign: "center",
+                                overflow: "auto"
                             }}
-                        />
-                    </Card>
+                        >
+                            <ReactJson
+                                src={parsed || {}}
+                                name={false}
+                                enableClipboard
+                                collapsed={2}
+                                displayDataTypes={false}
+                                style={{
+                                    fontSize: 13,
+                                    textAlign: "left",
+                                    backgroundColor: "#fff",
+                                    padding: "12px",
+                                    fontFamily: "monospace"
+                                }}
+                            />
+                        </Card>
+                    </When>
                 </Flex>
             </Drawer>
         </>

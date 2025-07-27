@@ -1,45 +1,28 @@
-import React, { useState, useEffect } from "react"
+import React, { useState } from "react"
+import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/router"
-import { Menu, MenuProps } from "antd"
-import {
-    HomeOutlined,
-    TeamOutlined,
-    FileSearchOutlined,
-    ContactsOutlined,
-    UserOutlined,
-    LoginOutlined,
-    TransactionOutlined
-} from "@ant-design/icons"
-import Icons from "@icons/icon"
-
-import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons"
-import { theme as antdTheme } from "antd"
 import { useTranslation } from "next-i18next"
-import Image from "next/image"
 import { useTheme } from "next-themes"
+import { Button, Menu, MenuProps, theme as antdTheme } from "antd"
+
+import {
+    ContactsOutlined,
+    HomeOutlined,
+    MenuFoldOutlined,
+    MenuUnfoldOutlined,
+    TeamOutlined,
+    TransactionOutlined,
+    UserOutlined
+} from "@ant-design/icons"
 
 const Sidebar: React.FC = () => {
     const router = useRouter()
     const { t } = useTranslation("common")
-    const [adminDetails, setAdminDetails] = useState<any>({})
     const [collapsed, setCollapsed] = useState(false)
     const { token } = antdTheme.useToken()
     const { theme } = useTheme()
     const isDarkMode = theme === "dark"
-
-    useEffect(() => {
-        const member = localStorage.getItem("admin")
-        if (member) {
-            const memberJson = JSON.parse(member)
-            setAdminDetails(memberJson)
-        }
-    }, [])
-
-    const handleLogout = () => {
-        localStorage.removeItem("admin")
-        window.location.href = "/auth/sign-in"
-    }
 
     const menuItems: MenuProps["items"] = [
         {
@@ -141,7 +124,7 @@ const Sidebar: React.FC = () => {
                     width={collapsed ? 32 : 40}
                     height={collapsed ? 32 : 40}
                 />
-                <button
+                <Button
                     style={{
                         background: "none",
                         border: "none",
@@ -153,7 +136,7 @@ const Sidebar: React.FC = () => {
                     aria-label={collapsed ? "Show sidebar" : "Hide sidebar"}
                 >
                     {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-                </button>
+                </Button>
             </div>
             {/* Menu utama */}
             <div style={{ flex: 1 }}>

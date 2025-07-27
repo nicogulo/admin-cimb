@@ -20,7 +20,6 @@ import CompanyLogo from "@icons/Images/CompanyLogo"
 import IconLaptop from "@icons/Images/Laptop"
 import IconMoon from "@icons/Images/Moon"
 import IconSun from "@icons/Images/Sun"
-import { resetAuth } from "@utils/auth"
 
 const { Header } = Layout
 

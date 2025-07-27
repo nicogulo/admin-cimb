@@ -1,9 +1,8 @@
-/* eslint-disable local-rules/no-router-query-redirect */
 import { useEffect } from "react"
 import { useRouter } from "next/router"
 
-import { sanitizeUrl } from "@utils/url"
 import { APP_DOMAIN } from "@config/config"
+import { sanitizeUrl } from "@utils/url"
 
 const isValidDomain = (hostname: string, domain: string) => hostname === domain || hostname.endsWith(`.${domain}`)
 

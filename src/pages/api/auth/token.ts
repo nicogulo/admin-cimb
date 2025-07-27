@@ -1,5 +1,6 @@
-import { API_URL } from "@config/config"
 import { NextApiRequest, NextApiResponse } from "next"
+
+import { API_URL } from "@config/config"
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const response = await fetch(`${API_URL}/keycloak/realms/face-repository/protocol/openid-connect/token`, {

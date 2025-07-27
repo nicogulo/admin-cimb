@@ -1,7 +1,8 @@
-import { serverSideTranslations } from "next-i18next/serverSideTranslations"
-import Home from "@modules/Home"
-import { withAuthSSR } from "@hoc/withAuth"
 import { GetServerSideProps } from "next"
+import { serverSideTranslations } from "next-i18next/serverSideTranslations"
+
+import { withAuthSSR } from "@hoc/withAuth"
+import Home from "@modules/Home"
 
 export const getServerSideProps: GetServerSideProps = withAuthSSR(async ({ locale }) => {
     return {

@@ -1,10 +1,10 @@
-import { MenuUnfoldOutlined } from "@ant-design/icons"
-import { Button, Card, Drawer, Flex, Image, message, Table, Tag } from "antd"
-import { useTranslation } from "next-i18next"
 import React, { useEffect, useState } from "react"
-
 import dynamic from "next/dynamic"
+import { useTranslation } from "next-i18next"
+import { Button, Card, Drawer, Flex, Image, message, Table, Tag, Tooltip } from "antd"
 import { imgaePlaceHolder } from "const/image-place-holder"
+
+import { MenuUnfoldOutlined } from "@ant-design/icons"
 import { API_URL } from "@config/config"
 import useAuth from "@hooks/useAuth"
 
@@ -15,7 +15,7 @@ interface CustomerDetailProps {
     data: any
 }
 
-const CustomerDetail: React.FC<CustomerDetailProps> = ({ cif, data }) => {
+const CustomerDetail: React.FC<CustomerDetailProps> = ({ cif }) => {
     const { t } = useTranslation("common")
     const { auth } = useAuth()
     const { token } = auth
@@ -72,6 +72,7 @@ const CustomerDetail: React.FC<CustomerDetailProps> = ({ cif, data }) => {
     useEffect(() => {
         getImage()
         getTransactions()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [cif])
 
     return (
@@ -95,21 +96,6 @@ const CustomerDetail: React.FC<CustomerDetailProps> = ({ cif, data }) => {
                                 style={{ width: "100%", height: "auto" }}
                             />
                         </Card>
-                        {/* <Card
-                            title={t("face_compare_logs")}
-                            style={{
-                                width: "100%",
-                                marginTop: 16,
-                                textAlign: "center"
-                            }}
-                        >
-                            <Image
-                                src={data.logs[0]?.currentFace || "/images/no-image.png"}
-                                fallback={imgaePlaceHolder}
-                                alt="Current Face"
-                                style={{ width: "100%", height: "auto" }}
-                            />
-                        </Card> */}
                     </Flex>
                     <Card
                         style={{
@@ -124,13 +110,74 @@ const CustomerDetail: React.FC<CustomerDetailProps> = ({ cif, data }) => {
                                     title: "Trx ID",
                                     dataIndex: "id",
                                     key: "id",
-                                    fixed: "left"
+                                    fixed: "left",
+                                    align: "center",
+                                    ellipsis: true,
+                                    render: (url: string) => {
+                                        if (!url) {
+                                            return <span>-</span>
+                                        }
+                                        return (
+                                            <Tooltip title={`Click to copy ${url}`}>
+                                                <Button
+                                                    type="text"
+                                                    onClick={() => {
+                                                        navigator.clipboard.writeText(url)
+                                                        message.success("URL Copied")
+                                                    }}
+                                                    size="small"
+                                                >
+                                                    <span
+                                                        style={{
+                                                            overflow: "hidden",
+                                                            textOverflow: "ellipsis",
+                                                            whiteSpace: "nowrap",
+                                                            width: "180px"
+                                                        }}
+                                                    >
+                                                        {url}
+                                                    </span>
+                                                </Button>
+                                            </Tooltip>
+                                        )
+                                    }
                                 },
+
                                 {
                                     title: "Zoloz Trx ID",
                                     dataIndex: "zoloz_trx_id",
                                     key: "zoloz_trx_id",
-                                    fixed: "left"
+                                    fixed: "left",
+                                    align: "center",
+                                    ellipsis: true,
+                                    render: (url: string) => {
+                                        if (!url) {
+                                            return <span style={{ textAlign: "center" }}>-</span>
+                                        }
+                                        return (
+                                            <Tooltip title={`Click to copy ${url}`}>
+                                                <Button
+                                                    type="text"
+                                                    onClick={() => {
+                                                        navigator.clipboard.writeText(url)
+                                                        message.success("URL Copied")
+                                                    }}
+                                                    size="small"
+                                                >
+                                                    <span
+                                                        style={{
+                                                            overflow: "hidden",
+                                                            textOverflow: "ellipsis",
+                                                            whiteSpace: "nowrap",
+                                                            width: "180px"
+                                                        }}
+                                                    >
+                                                        {url}
+                                                    </span>
+                                                </Button>
+                                            </Tooltip>
+                                        )
+                                    }
                                 },
 
                                 {
@@ -156,7 +203,7 @@ const CustomerDetail: React.FC<CustomerDetailProps> = ({ cif, data }) => {
                                     fixed: "right",
                                     render: (text: string) => (
                                         <Tag
-                                            color={text === "true" ? "green" : "red"}
+                                            color={text === "Success" ? "green" : "red"}
                                             style={{ textTransform: "capitalize" }}
                                         >
                                             {text}

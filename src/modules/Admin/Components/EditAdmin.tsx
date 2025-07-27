@@ -1,6 +1,7 @@
-import { EditOutlined } from "@ant-design/icons"
-import { Button, Form, Input, Modal, Select } from "antd"
 import React, { useState } from "react"
+import { Button, Form, Input, Modal, Select } from "antd"
+
+import { EditOutlined } from "@ant-design/icons"
 
 interface EditAdminProps {
     data: any

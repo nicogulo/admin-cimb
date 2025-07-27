@@ -1,77 +1,131 @@
-import Builder from "@verihubs/liveness"
-
 import React, { useCallback, useEffect, useState } from "react"
+import { Button, Form, Input, message, Result, Select } from "antd"
+import { Else, If, Then } from "react-if"
 
+import LayoutDashboard from "@components/Layouts"
 // import useUpload from '@/hooks/useUpload';
-
 // import Button from '@/components/Button';
 // import Icons from '@/components/Icon';
 // import { Else, If, Then } from '@/components/If';
 // import { toast } from '@/components/Toast';
-
-import { VERIHUB_APP_ID, VERIHUB_APP_KEY, VERIHUB_LICENCE_ID, VERIHUB_URL } from "@config/config"
-
-import { Button, Image, message } from "antd"
-import { Else, If, Then } from "react-if"
-import { CameraOutlined } from "@ant-design/icons"
-import { imgaePlaceHolder } from "const/image-place-holder"
+import { API_URL, VERIHUB_APP_ID, VERIHUB_APP_KEY, VERIHUB_LICENCE_ID, VERIHUB_URL } from "@config/config"
+import useAuth from "@hooks/useAuth"
+import Builder from "@verihubs/liveness"
 
 interface Props {
     onBack: () => void
     onNext: () => void
 }
 
-const FacialRecognition: React.FC<Props> = ({ onBack, onNext }) => {
-    const [image, setImage] = useState<string | null>(null)
-    const [blob, setBlob] = useState<File | null>(null)
-    // const { upload, loading } = useUpload()
+// Registration
+// Forget Password
+// Change Pin
+// Feature Activation
+// Limit Increase
+// Download E-Statement
+// Change Email
+// Request Card
+// Change Debit Card
 
-    // const handleSubmit = () => {
-    //     if (blob) {
-    //         upload({
-    //             type: "liveness",
-    //             file: blob
-    //         })
-    //             .then((res) => {
-    //                 if (res) {
-    //                     toast.success("Berhasil upload foto")
-    //                     setTimeout(() => {
-    //                         onNext()
-    //                     }, 1000)
-    //                 }
-    //             })
-    //             .catch(() => {
-    //                 toast.error("Gagal upload foto")
-    //             })
-    //     }
-    // }
+const actiionOptions = [
+    {
+        label: "Registration",
+        value: "Registration"
+    },
+    {
+        label: "Forget Password",
+        value: "Forget Password"
+    },
+    {
+        label: "Change Pin",
+        value: "Change Pin"
+    },
+    {
+        label: "Feature Activation",
+        value: "Feature Activation"
+    },
+    {
+        label: "Limit Increase",
+        value: "Limit Increase"
+    },
+    {
+        label: "Download E-Statement",
+        value: "Download E-Statement"
+    },
+    {
+        label: "Change Email",
+        value: "Change Email"
+    },
+    {
+        label: "Request Card",
+        value: "Request Card"
+    },
+    {
+        label: "Change Debit Card",
+        value: "Change Debit Card"
+    }
+]
+
+const channelOptions = [
+    {
+        label: "OctoMobile",
+        value: "OctoMobile"
+    },
+    {
+        label: "SSB",
+        value: "SSB"
+    },
+    {
+        label: "Website",
+        value: "Website"
+    }
+]
+
+const FacialRecognition: React.FC<Props> = ({ onBack, onNext }) => {
+    const [form] = Form.useForm()
+    const [image, setImage] = useState<string | null>(null)
+    const [isSuccess, setIsSuccess] = useState(false)
+
+    const {
+        auth: { token }
+    } = useAuth()
 
     const appId = VERIHUB_APP_ID ?? ""
     const appKey = VERIHUB_APP_KEY ?? ""
 
-    const base64ToFile = (base64: string, fileName: string): File | null => {
-        if (!base64 || typeof base64 !== "string") {
-            console.error("Invalid Base64 string")
-            return null
+    const handleSubmit = async (base64: string) => {
+        const isRegistration = form.getFieldValue("action") === "Registration"
+
+        try {
+            const response = await fetch(`${API_URL}/api/v1/face/${isRegistration ? "save" : "liveness"}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
+
+                body: JSON.stringify({
+                    cif: form.getFieldValue("cif"),
+                    channel: form.getFieldValue("channel"),
+                    action: form.getFieldValue("action"),
+                    image_base64: isRegistration ? base64 : undefined,
+                    image_1: isRegistration ? undefined : base64,
+                    zoloz_result_log: isRegistration ? undefined : "{success: true}"
+                })
+            })
+            const res = await response.json()
+
+            if (res.status === "success") {
+                message.success("Data submitted successfully")
+                setIsSuccess(true)
+            }
+            if (res.status) {
+                message.success("Data submitted successfully")
+                setIsSuccess(true)
+            }
+        } catch (error) {
+            message.error("Failed to submit data")
         }
-
-        const [header, base64Data] = base64.split(",")
-
-        if (!base64Data) {
-            console.error("Invalid Base64 format")
-            return null
-        }
-
-        const mimeType = header.match(/:(.*?);/)?.[1]
-
-        if (!mimeType) {
-            console.error("Invalid MIME type")
-            return null
-        }
-
-        const buffer = Buffer.from(base64Data, "base64")
-
-        return new File([buffer], fileName, { type: mimeType })
     }
 
     useEffect(() => {
@@ -99,10 +153,12 @@ const FacialRecognition: React.FC<Props> = ({ onBack, onNext }) => {
         return () => {
             ;(window as any).LivenessSDK?.onDestroy()
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     useEffect(() => {
         const livenessMessageListener = ({ data: { data, subject } }: { data: any; subject: string }) => {
+            const file = `data:image/png;base64,${data?.image?.url}`
             switch (subject) {
                 case "Verification.Verbose":
                     break
@@ -127,31 +183,13 @@ const FacialRecognition: React.FC<Props> = ({ onBack, onNext }) => {
                         ;(global as any).LivenessSDK.onDestroy()
                     }, 1500)
 
-                    // eslint-disable-next-line no-case-declarations
-                    const file = base64ToFile(`data:image/png;base64,${data.image.url}`, "image/png")
-                    setBlob(file)
-
-                    // if (file) {
-                    //     upload({
-                    //         type: "liveness",
-                    //         file: file
-                    //     })
-                    //         .then(() => {
-                    //             toast.success("Berhasil upload foto")
-                    //             setTimeout(() => {
-                    //                 onNext()
-                    //             }, 1000)
-                    //         })
-                    //         .catch(() => {
-                    //             toast.error("Gagal upload foto")
-                    //         })
-                    // }
+                    if (data.image.url) {
+                        handleSubmit(file)
+                    }
 
                     break
 
                 default:
-                    console.log({ data, subject })
-
                     break
             }
         }
@@ -166,9 +204,8 @@ const FacialRecognition: React.FC<Props> = ({ onBack, onNext }) => {
                 ;(window as any).LivenessSDK?.onDestroy()
             }
         }
-    }, [image, onNext])
-
-    console.log({ blob, image })
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [form, image, onNext, token])
 
     const doLivenessVerification = useCallback(() => {
         if (typeof window !== "undefined") {
@@ -178,68 +215,55 @@ const FacialRecognition: React.FC<Props> = ({ onBack, onNext }) => {
         }
     }, [])
 
-    const handleBack = () => {
-        ;(window as any).LivenessSDK?.onDestroy()
-        onBack()
-    }
+    // const handleBack = () => {
+    //     ;(window as any).LivenessSDK?.onDestroy()
+    //     onBack()
+    // }
 
     return (
-        <>
-            <div className="flex flex-col items-center gap-6 ">
-                <div className="flex max-w-[480px] flex-col items-start gap-6">
-                    <div className="flex flex-col gap-2">
-                        <p className="text-2xl font-bold text-[#18181E]">Facial Recognition</p>
-
-                        <p className="text-sm font-normal text-[#525D66]">
-                            Kami akan merekam wajah Anda untuk memverifikasi data biometrik dengan menganalisis dan
-                            membandingkannya dengan data referensi.
-                        </p>
-                    </div>
-                    <div className="flex w-full items-center justify-center">
-                        <Image alt="liveness" src={image || ""} fallback={imgaePlaceHolder} />
-                    </div>
-                    <div className="flex flex-col gap-4">
-                        <div className="flex flex-col gap-2 rounded-lg bg-[#F2F6FA] p-4">
-                            <p className="text-xs font-normal uppercase text-[#758089]">
-                                Panduan untuk Pengenalan Wajah
-                            </p>
-                            <ul className="ml-6 list-disc text-sm font-normal text-[#525D66]">
-                                <li>Pastikan seluruh wajah Anda terlihat dan berada di tengah bingkai.</li>
-                                <li>
-                                    Pastikan wajah Anda diterangi dengan baik, hindari bayangan atau pencahayaan dari
-                                    belakang.
-                                </li>
-                                <li>Jangan menggunakan topi, kacamata, atau apa pun yang menutupi wajah Anda.</li>
-                                <li>Pertahankan ekspresi alami, hindari membuat ekspresi yang berlebihan.</li>
-                                <li>Pegang kamera dengan stabil dan pada jarak sepanjang lengan.</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div className="flex w-full flex-row justify-end gap-4 ">
-                        <Button className="w-[120px]" onClick={handleBack}>
-                            Kembali
-                        </Button>
-                        <If condition={!image}>
-                            <Then>
-                                <Button
-                                    onClick={doLivenessVerification}
-                                    // disabled={loading} loading={loading}
-                                >
-                                    <CameraOutlined width={20} height={20} /> Klik untuk memulai
-                                </Button>
-                            </Then>
-                            <Else>
-                                <Button
-                                // onClick={handleSubmit} disabled={loading} loading={loading}
-                                >
-                                    Kirim
-                                </Button>
-                            </Else>
-                        </If>
-                    </div>
-                </div>
-            </div>
-        </>
+        <LayoutDashboard title="Facial Recognition">
+            <If condition={isSuccess}>
+                <Then>
+                    <Result
+                        status="success"
+                        title="Liveness Verification Successful"
+                        subTitle="Your liveness verification has been completed successfully."
+                    />
+                </Then>
+                <Else>
+                    <Form
+                        form={form}
+                        labelCol={{ span: 4 }}
+                        wrapperCol={{ span: 16 }}
+                        style={{ width: 600 }}
+                        onFinish={doLivenessVerification}
+                    >
+                        <Form.Item label="CIF" name="cif" rules={[{ required: true, message: "Please enter CIF" }]}>
+                            <Input placeholder="Enter CIF" style={{ width: "100%" }} />
+                        </Form.Item>
+                        <Form.Item
+                            label="Action"
+                            name="action"
+                            rules={[{ required: true, message: "Please select an action" }]}
+                        >
+                            <Select options={actiionOptions} placeholder="Select Action" style={{ width: "100%" }} />
+                        </Form.Item>
+                        <Form.Item
+                            label="Channel"
+                            name="channel"
+                            rules={[{ required: true, message: "Please select a channel" }]}
+                        >
+                            <Select options={channelOptions} placeholder="Select Channel" style={{ width: "100%" }} />
+                        </Form.Item>
+                        <Form.Item label={null}>
+                            <Button type="primary" htmlType="submit">
+                                Start Liveness Simulation
+                            </Button>
+                        </Form.Item>
+                    </Form>
+                </Else>
+            </If>
+        </LayoutDashboard>
     )
 }
 

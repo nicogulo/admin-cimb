@@ -1,27 +1,17 @@
+import React, { useEffect, useMemo, useState } from "react"
+import { useTranslation } from "next-i18next"
+import { Breadcrumb, Button, Card, DatePicker, Input, message, Select, Space, Table, Tag } from "antd"
+import { channelOptions, dateOptions, statusOptions } from "const/optionsFilter"
+import dayjs from "dayjs"
+import debounce from "lodash/debounce"
+
 import { ArrowLeftOutlined, ExportOutlined, MenuUnfoldOutlined } from "@ant-design/icons"
 import LayoutDashboard from "@components/Layouts"
+import { API_URL } from "@config/config"
 import useAuth from "@hooks/useAuth"
 import { formatDate } from "@utils/date"
-import {
-    Card,
-    Drawer,
-    Flex,
-    Table,
-    theme,
-    Input,
-    Select,
-    DatePicker,
-    Space,
-    Button,
-    message,
-    Breadcrumb,
-    Tag
-} from "antd"
-import { useTranslation } from "next-i18next"
-import { useRouter } from "next/router"
-import React, { useEffect, useState } from "react"
+
 import CustomerDetail from "./Components/CustomerDetail"
-import { API_URL } from "@config/config"
 
 const { RangePicker } = DatePicker
 
@@ -35,7 +25,6 @@ interface CustomerData {
 
 const Dashboard: React.FC = () => {
     const { t } = useTranslation("common")
-    const router = useRouter()
 
     const [data, setData] = useState<CustomerData[]>([])
     const { auth } = useAuth()
@@ -58,13 +47,38 @@ const Dashboard: React.FC = () => {
 
     const getData = async ({ limit, page }: { limit: number; page: number }) => {
         try {
-            const res = await fetch(`${API_URL}/api/v1/face/customer_list?limit=${limit}&page=${page}`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`
+            let dateFilterParam = ""
+            switch (dateFilter) {
+                case "24hr":
+                    dateFilterParam = `start_date=${dayjs().subtract(1, "day").format("YYYY-MM-DD")}&end_date=${dayjs().format("YYYY-MM-DD")}`
+                    break
+                case "last7days":
+                    dateFilterParam = `start_date=${dayjs().subtract(7, "day").format("YYYY-MM-DD")}&end_date=${dayjs().format("YYYY-MM-DD")}`
+                    break
+                case "last30days":
+                    dateFilterParam = `start_date=${dayjs().subtract(30, "day").format("YYYY-MM-DD")}&end_date=${dayjs().format("YYYY-MM-DD")}`
+                    break
+                case "custom":
+                    if (customRange && customRange.length === 2) {
+                        const [start, end] = customRange
+                        dateFilterParam = `start_date=${dayjs(start).format("YYYY-MM-DD")}&end_date=${dayjs(end).format("YYYY-MM-DD")}`
+                    }
+                    break
+                default:
+                    dateFilterParam = ""
+                    break
+            }
+
+            const res = await fetch(
+                `${API_URL}/api/v1/face/customer_list?${searchCif ? `cif=${searchCif}&` : ""}${dateFilterParam ? `${dateFilterParam}&` : ""}${channel ? `channel=${channel}&` : ""}${status ? `status=${status}&` : ""}limit=${limit}&page=${page}`,
+                {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`
+                    }
                 }
-            })
+            )
             const { data } = await res.json()
 
             if (data?.customers) {
@@ -76,25 +90,9 @@ const Dashboard: React.FC = () => {
                 })
             }
         } catch (error) {
-            console.error("Error fetching customer data:", error)
+            message.error("Error fetching customer data")
         }
     }
-
-    const channelOptions = [
-        { value: "Mobile App", label: "Mobile App" },
-        { value: "Web Portal", label: "Web Portal" }
-    ]
-    const statusOptions = [
-        { value: "Active", label: "Active" },
-        { value: "Inactive", label: "Inactive" }
-    ]
-
-    const dateOptions = [
-        { value: "24hr", label: t("last_24h") },
-        { value: "7days", label: t("last_7d") },
-        { value: "30days", label: t("last_30d") },
-        { value: "custom", label: t("custom_range") }
-    ]
 
     // Filter logic (dummy, only front-end)
     const filteredData = data.filter((item) => {
@@ -107,7 +105,7 @@ const Dashboard: React.FC = () => {
             // last 24 hours
             const now = new Date()
             const itemDate = new Date(item.last_transaction_date)
-            console.log("Item Date:", itemDate)
+
             if ((now.getTime() - itemDate.getTime()) / (1000 * 60 * 60) > 24) match = false
         } else if (dateFilter === "7days") {
             const now = new Date()
@@ -133,6 +131,14 @@ const Dashboard: React.FC = () => {
         }
         return match
     })
+
+    const handleSearch = useMemo(
+        () =>
+            debounce((searchValue: string) => {
+                setSearchCif(searchValue)
+            }, 1000),
+        []
+    )
 
     const handleExport = async () => {
         const Excel = await import("exceljs")
@@ -205,7 +211,7 @@ const Dashboard: React.FC = () => {
             key: "last_transaction_status",
             align: "center" as const,
             render: (text: string) => (
-                <Tag color={text === "true" ? "green" : "red"} style={{ textTransform: "capitalize" }}>
+                <Tag color={text === "Success" ? "green" : "red"} style={{ textTransform: "capitalize" }}>
                     {text}
                 </Tag>
             )
@@ -270,7 +276,8 @@ const Dashboard: React.FC = () => {
             limit: pagination.pageSize,
             page: pagination.current
         })
-    }, [pagination.current, pagination.pageSize, token])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [pagination.current, pagination.pageSize, searchCif, dateFilter, channel, status])
 
     return (
         <LayoutDashboard title={t("customer_management.title")}>
@@ -286,8 +293,7 @@ const Dashboard: React.FC = () => {
                         <Input.Search
                             placeholder={t("search_cif")}
                             allowClear
-                            value={searchCif}
-                            onChange={(e) => setSearchCif(e.target.value)}
+                            onChange={(e) => handleSearch(e.target.value)}
                             style={{ width: 180 }}
                         />
                         <Select
@@ -338,7 +344,7 @@ const Dashboard: React.FC = () => {
             ) : (
                 <Card
                     style={{ marginTop: 16 }}
-                    title={t("customer_management.detail") + ` - ` + selectedCustomer?.name}
+                    title={`${t("customer_management.detail")} - ${selectedCustomer?.name}`}
                     extra={
                         <Button
                             onClick={() => {

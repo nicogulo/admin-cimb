@@ -1,6 +1,7 @@
-import { EditOutlined } from "@ant-design/icons"
-import { Button, Form, Input, Modal } from "antd"
 import React from "react"
+import { Button, Form, Input, Modal } from "antd"
+
+import { EditOutlined } from "@ant-design/icons"
 
 interface EditRoleProps {
     data: any
