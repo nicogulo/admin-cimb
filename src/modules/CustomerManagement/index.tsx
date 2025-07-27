@@ -21,6 +21,7 @@ import { useTranslation } from "next-i18next"
 import { useRouter } from "next/router"
 import React, { useEffect, useState } from "react"
 import CustomerDetail from "./Components/CustomerDetail"
+import { API_URL, PORT_API } from "@config/config"
 
 const { RangePicker } = DatePicker
 
@@ -29,33 +30,16 @@ interface CustomerData {
     name: string
     last_transaction_date: string
     last_transaction_channel: string
-    status: string
+    last_transaction_status: string
 }
-
-const dataDummy = [
-    {
-        cif: "CIF12345678",
-        name: "Siti Rahmawati",
-        last_transaction_date: "2025-07-26T08:56:02Z",
-        last_transaction_channel: "Octo",
-        status: "Success"
-    },
-    {
-        cif: "CIF98765432",
-        name: "Budi Santoso",
-        last_transaction_date: "2025-07-25T17:33:45Z",
-        last_transaction_channel: "eTP",
-        status: "Failed"
-    }
-]
 
 const Dashboard: React.FC = () => {
     const { t } = useTranslation("common")
     const router = useRouter()
 
-    const [adminLevel, setAdminLevel] = useState(0)
+    const [data, setData] = useState<CustomerData[]>([])
     const { auth } = useAuth()
-    const { isLoggedIn } = auth
+    const { token } = auth
     const [pagination, setPagination] = useState<any>({
         current: 1,
         pageSize: 10
@@ -72,18 +56,29 @@ const Dashboard: React.FC = () => {
     ])
     const [selectedCif, setSelectedCif] = useState<string | null>(null)
 
-    useEffect(() => {
-        // if (!isLoggedIn) {
-        //     router.push("/auth/sign-in")
-        //     return
-        // }
-        const member = localStorage.getItem("admin")
-        if (member) {
-            const memberJson = JSON.parse(member)
-            setAdminLevel(memberJson?.level)
+    const getData = async ({ limit, page }: { limit: number; page: number }) => {
+        try {
+            const res = await fetch(`${API_URL}${PORT_API}/api/v1/face/customer_list?limit=${limit}&page=${page}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            const { data } = await res.json()
+
+            if (data?.customers) {
+                setData(data.customers)
+                setPagination({
+                    current: page,
+                    pageSize: limit,
+                    total: data.total
+                })
+            }
+        } catch (error) {
+            console.error("Error fetching customer data:", error)
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isLoggedIn, router])
+    }
 
     const channelOptions = [
         { value: "Mobile App", label: "Mobile App" },
@@ -102,16 +97,17 @@ const Dashboard: React.FC = () => {
     ]
 
     // Filter logic (dummy, only front-end)
-    const filteredData = dataDummy.filter((item) => {
+    const filteredData = data.filter((item) => {
         let match = true
         if (searchCif && !item.cif.includes(searchCif)) match = false
         if (channel && item.last_transaction_channel !== channel) match = false
-        if (status && item.status !== status) match = false
+        if (status && item.last_transaction_status !== status) match = false
         // Date filter
         if (dateFilter === "24hr") {
             // last 24 hours
             const now = new Date()
             const itemDate = new Date(item.last_transaction_date)
+            console.log("Item Date:", itemDate)
             if ((now.getTime() - itemDate.getTime()) / (1000 * 60 * 60) > 24) match = false
         } else if (dateFilter === "7days") {
             const now = new Date()
@@ -155,7 +151,7 @@ const Dashboard: React.FC = () => {
                 last_transaction_date: formatDate(row.last_transaction_date, "DD MMM YYYY, HH:mm"),
                 name: row.name,
                 last_transaction_channel: row.last_transaction_channel,
-                status: row.status
+                status: row.last_transaction_status
             })
         })
 
@@ -199,14 +195,20 @@ const Dashboard: React.FC = () => {
             title: t("last_transaction_channel"),
             dataIndex: "last_transaction_channel",
             key: "last_transaction_channel",
-            render: (text: string) => text || t("unknown_channel")
+            render: (text: string) => (
+                <span style={{ textTransform: "capitalize" }}>{text || t("unknown_channel")}</span>
+            )
         },
         {
             title: t("status"),
-            dataIndex: "status",
-            key: "status",
+            dataIndex: "last_transaction_status",
+            key: "last_transaction_status",
             align: "center" as const,
-            render: (text: string) => <Tag color={text === "Success" ? "green" : "red"}>{text}</Tag>
+            render: (text: string) => (
+                <Tag color={text === "true" ? "green" : "red"} style={{ textTransform: "capitalize" }}>
+                    {text}
+                </Tag>
+            )
         },
         {
             title: "•••",
@@ -239,7 +241,7 @@ const Dashboard: React.FC = () => {
     ]
 
     // Detail table for selected customer
-    const selectedCustomer = dataDummy.find((item) => item.cif === selectedCif)
+    const selectedCustomer = data.find((item) => item.cif === selectedCif)
     const detailColumns = [
         {
             title: t("user_id"),
@@ -247,8 +249,13 @@ const Dashboard: React.FC = () => {
             key: "cif"
         },
         { title: t("name"), dataIndex: "name", key: "name" },
-        { title: t("phone_number"), dataIndex: "phoneNumber", key: "phoneNumber" },
-        { title: t("date_of_birth"), dataIndex: "dateOfBirth", key: "dateOfBirth" },
+        { title: t("phone_number"), dataIndex: "phone_number", key: "phoneNumber" },
+        {
+            title: t("date_of_birth"),
+            dataIndex: "date_of_birth",
+            key: "dateOfBirth",
+            render: (text: string) => formatDate(text, "DD MMM YYYY")
+        },
         {
             title: "•••",
             key: "cif",
@@ -258,8 +265,15 @@ const Dashboard: React.FC = () => {
         }
     ]
 
+    useEffect(() => {
+        getData({
+            limit: pagination.pageSize,
+            page: pagination.current
+        })
+    }, [pagination.current, pagination.pageSize, token])
+
     return (
-        <LayoutDashboard adminLevel={adminLevel} title={t("customer_management.title")}>
+        <LayoutDashboard title={t("customer_management.title")}>
             <Breadcrumb
                 items={breadcrumbs.map((item) => ({
                     key: item.title,
@@ -339,7 +353,7 @@ const Dashboard: React.FC = () => {
                 >
                     <Table
                         columns={detailColumns}
-                        dataSource={dataDummy.filter((item) => item.cif === selectedCif)}
+                        dataSource={data.filter((item) => item.cif === selectedCif)}
                         pagination={false}
                     />
                 </Card>

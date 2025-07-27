@@ -1,148 +1,97 @@
 import LayoutDashboard from "@components/Layouts"
 import { Button, DatePicker, Input, message, Select, Space, Table, Tag } from "antd"
 import { useTranslation } from "next-i18next"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import TransactionDetail from "./Components/TransactionDetail"
 import { channelOptions, dateOptions, statusOptions } from "const/optionsFilter"
 import { formatDate } from "@utils/date"
 import { ExportOutlined } from "@ant-design/icons"
+import { API_URL, PORT_API } from "@config/config"
+import useAuth from "@hooks/useAuth"
+import dayjs from "dayjs"
 
 const { RangePicker } = DatePicker
 
-const dummyData = [
-    {
-        trx_id: 201,
-        base_face: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD...",
-        current_face: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD...",
-        user_id: "CIF99887766",
-        channel: "SSB",
-        date_time: "2025-07-26T08:56:02.000Z",
-        status: "Success",
-        action: "Forget Email",
-        zoloz_trx_id: "cee237de-10aa-43d9-a8a3-f2d63a1684b1",
-        zoloz_result_log: {
-            success: true,
-            message: "Face valid",
-            data: {
-                message: "Request Success",
-                session_id: "cee237de-10aa-43d9-a8a3-f2d63a1684b1",
-                timestamp: 1753545362,
-                status_code: "FACE-14",
-                bounding_box: {
-                    TopLeftX: "65.17205",
-                    TopLeftY: "55.80445",
-                    BottomRightX: "153.9487",
-                    BottomRightY: "177.46924",
-                    Width: "88.77664",
-                    Height: "121.664795"
-                },
-                face_landmark: {
-                    LeftEyeX: "85.13355",
-                    LeftEyeY: "101.073456",
-                    RightEyeX: "125.70785",
-                    RightEyeY: "101.073456",
-                    NoseX: "108.31886",
-                    NoseY: "139.11185",
-                    MouthLeftX: "91.29215",
-                    MouthLeftY: "150.7045",
-                    MouthRightX: "123.89649",
-                    MouthRightY: "151.06677"
-                },
-                rotation: 0,
-                nface: 1,
-                attributes: {
-                    sunglasses_on: false,
-                    veil_on: false,
-                    mask_on: false,
-                    hat_on: false
-                },
-                image_quality: {
-                    blur: false,
-                    dark: false
-                },
-                liveness: {
-                    status: true,
-                    probability: "100"
-                }
-            },
-            timestamp: "2025-07-26T08:56:01.781479369Z"
-        },
-        created_at: "2025-07-26T08:56:02.000Z",
-        updated_at: "2025-07-26T08:56:02.000Z"
-    },
-    {
-        trx_id: 202,
-        base_face: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD...",
-        current_face: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD...",
-        user_id: "CIF99887766",
-        channel: "SSB",
-        date_time: "2025-07-26T08:56:02.000Z",
-        status: "Failed",
-        action: "Registration",
-        zoloz_trx_id: "cee237de-10aa-43d9-a8a3-f2d63a1684b1",
-        zoloz_result_log: {
-            success: false,
-            message: "Face invalid",
-            data: {
-                message: "Request Failed",
-                session_id: "cee237de-10aa-43d9-a8a3-f2d63a1684b1",
-                timestamp: 1753545362,
-                status_code: "FACE-14",
-                bounding_box: {
-                    TopLeftX: "65.17205",
-                    TopLeftY: "55.80445",
-                    BottomRightX: "153.9487",
-                    BottomRightY: "177.46924",
-                    Width: "88.77664",
-                    Height: "121.664795"
-                },
-                face_landmark: {
-                    LeftEyeX: "85.13355",
-                    LeftEyeY: "101.073456",
-                    RightEyeX: "125.70785",
-                    RightEyeY: "101.073456",
-                    NoseX: "108.31886",
-                    NoseY: "139.11185",
-                    MouthLeftX: "91.29215",
-                    MouthLeftY: "150.7045",
-                    MouthRightX: "123.89649",
-                    MouthRightY: "151.06677"
-                },
-                rotation: 0,
-                nface: 1,
-                attributes: {
-                    sunglasses_on: false,
-                    veil_on: false,
-                    mask_on: false,
-                    hat_on: false
-                },
-                image_quality: {
-                    blur: true,
-                    dark: false
-                },
-                liveness: {
-                    status: false,
-                    probability: "0"
-                }
-            },
-            timestamp: "2025-07-26T08:56:01.781479369Z"
-        },
-        created_at: "2025-07-26T08:56:02.000Z",
-        updated_at: "2025-07-26T08:56:02.000Z"
-    }
-]
 const Transaction = () => {
     const { t } = useTranslation("common")
+    const [data, setData] = useState<TransactionData[]>([])
     const [searchCif, setSearchCif] = useState<string | undefined>()
     const [dateFilter, setDateFilter] = useState<string | undefined>()
     const [customRange, setCustomRange] = useState<any>(null)
     const [channel, setChannel] = useState<string | undefined>()
     const [status, setStatus] = useState<string | undefined>()
+    const [pagination, setPagination] = useState<any>({
+        current: 1,
+        pageSize: 10
+    })
 
-    const filteredData = dummyData.filter((item) => {
+    const {
+        auth: { token }
+    } = useAuth()
+
+    const getData = async ({ limit, page }: { limit: number; page: number }) => {
+        try {
+            let dateFilterParam = ""
+            switch (dateFilter) {
+                case "24hr":
+                    dateFilterParam = `start_date=${dayjs().subtract(1, "day").format("YYYY-MM-DD")}&end_date=${dayjs().format("YYYY-MM-DD")}`
+                    break
+                case "last7days":
+                    dateFilterParam = `start_date=${dayjs().subtract(7, "day").format("YYYY-MM-DD")}&end_date=${dayjs().format("YYYY-MM-DD")}`
+                    break
+                case "last30days":
+                    dateFilterParam = `start_date=${dayjs().subtract(30, "day").format("YYYY-MM-DD")}&end_date=${dayjs().format("YYYY-MM-DD")}`
+                    break
+                case "custom":
+                    if (customRange && customRange.length === 2) {
+                        const [start, end] = customRange
+                        dateFilterParam = `start_date=${dayjs(start).format("YYYY-MM-DD")}&end_date=${dayjs(end).format("YYYY-MM-DD")}`
+                    }
+                    break
+                default:
+                    dateFilterParam = ""
+                    break
+            }
+
+            const res = await fetch(
+                `${API_URL}${PORT_API}/api/v1/face/transaction_list?${searchCif ? `cif=${searchCif}&` : ""}${dateFilterParam ? `${dateFilterParam}&` : ""}${channel ? `channel=${channel}&` : ""}${status ? `status=${status}&` : ""}limit=${limit}&page=${page}`,
+                {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            )
+            const { data } = await res.json()
+            if (data?.transactions) {
+                const transactions = data.transactions.map((item: any) => ({
+                    id: item.id,
+                    cif: item.cif,
+                    channel: item.channel,
+                    date_time: item.date_time,
+                    action: item.action,
+                    status: item.status ? "Success" : "Failed",
+                    zoloz_trx_id: item.zoloz_trx_id,
+                    zoloz_result_log: JSON.stringify(item.zoloz_result_log, null, 2),
+                    created_at: item.created_at
+                }))
+                setData(transactions)
+                setPagination({
+                    current: page,
+                    pageSize: limit,
+                    total: data.total
+                })
+            }
+        } catch (error) {
+            message.error("Error fetching transaction data")
+        }
+    }
+
+    const filteredData = data.filter((item) => {
         let matches = true
         if (searchCif) {
-            matches = matches && item.user_id.includes(searchCif)
+            matches = matches && item.cif.includes(searchCif)
         }
         if (dateFilter === "24hr") {
             // last 24 hours
@@ -198,11 +147,11 @@ const Transaction = () => {
 
         filteredData.forEach((item) => {
             worksheet.addRow({
-                transactionId: item.trx_id,
+                transactionId: item.id,
                 dateTime: formatDate(item.created_at, "DD MMM YYYY, HH:mm"),
                 zolozTrxId: item.zoloz_trx_id,
                 action: item.action,
-                cif: item.user_id,
+                cif: item.cif,
                 channel: item.channel,
                 status: item.status
             })
@@ -235,13 +184,13 @@ const Transaction = () => {
         },
         {
             title: t("transaction_id"),
-            dataIndex: "trx_id",
-            key: "trx_id"
+            dataIndex: "id",
+            key: "id"
         },
         {
             title: t("cif"),
-            dataIndex: "user_id",
-            key: "user_id"
+            dataIndex: "cif",
+            key: "cif"
         },
 
         {
@@ -254,7 +203,8 @@ const Transaction = () => {
             title: t("channel"),
             dataIndex: "channel",
             key: "channel",
-            align: "center" as const
+            align: "center" as const,
+            render: (text: string) => <span style={{ textTransform: "capitalize" }}>{text}</span>
         },
         {
             title: t("action"),
@@ -276,6 +226,10 @@ const Transaction = () => {
             render: (text: string, record: any) => <TransactionDetail data={record} cif={text} />
         }
     ]
+
+    useEffect(() => {
+        getData({ limit: pagination.pageSize, page: pagination.current })
+    }, [pagination.current, pagination.pageSize, searchCif, dateFilter, customRange, channel, status])
     return (
         <LayoutDashboard title={t("transactions")}>
             <>

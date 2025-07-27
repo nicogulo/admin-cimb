@@ -1,14 +1,16 @@
-import React from "react"
+import React, { useState } from "react"
 import { LoginOutlined } from "@ant-design/icons"
-import LocaleSwitcher from "@components/LocaleSwitcher"
+
 import { useTheme } from "next-themes"
-import { theme as antdTheme, MenuProps } from "antd"
+import { theme as antdTheme, Button, MenuProps } from "antd"
 import Icons from "@icons/icon"
 import IconSun from "@icons/Images/Sun"
 import IconMoon from "@icons/Images/Moon"
 import IconLaptop from "@icons/Images/Laptop"
 import { Dropdown } from "antd"
 import { useTranslation } from "next-i18next"
+import useAuth, { useLogout } from "@hooks/useAuth"
+import { Else, If, Then } from "react-if"
 
 const ThemeToggle = () => {
     const { setTheme, theme } = useTheme()
@@ -73,10 +75,21 @@ const ThemeToggle = () => {
 const DashboardTopbar: React.FC = () => {
     const { setTheme, theme } = useTheme()
     const { token } = antdTheme.useToken()
+    const [isLoading, setLoading] = useState(false)
+
+    const {
+        auth: { isLoggedIn }
+    } = useAuth()
+    const { logout } = useLogout()
+
     const handleLogout = () => {
-        localStorage.removeItem("admin")
-        window.location.href = "/auth/sign-in"
+        setLoading(true)
+        setTimeout(() => {
+            logout(true)
+        }, 1000)
+        setLoading(false)
     }
+
     const themeOptions = [
         {
             key: "light",
@@ -134,24 +147,21 @@ const DashboardTopbar: React.FC = () => {
         >
             {/* LocaleSwitcher & ThemeSwitcher hidden for now */}
             <ThemeToggle />
-            <button
-                onClick={handleLogout}
-                style={{
-                    padding: "8px 16px",
-                    background: "#ed3939",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "6px",
-                    cursor: "pointer",
-                    fontWeight: 500,
-                    fontSize: "15px",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 8
-                }}
-            >
-                <LoginOutlined /> Log out
-            </button>
+            <If condition={isLoggedIn}>
+                <Then>
+                    <Button
+                        type="primary"
+                        danger
+                        loading={isLoading}
+                        disabled={isLoading}
+                        onClick={handleLogout}
+                        icon={<LoginOutlined />}
+                    >
+                        Log out
+                    </Button>
+                </Then>
+                <Else>asdsa</Else>
+            </If>
         </div>
     )
 }

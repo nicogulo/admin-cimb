@@ -9,7 +9,7 @@ import React, { useCallback, useEffect, useState } from "react"
 // import { Else, If, Then } from '@/components/If';
 // import { toast } from '@/components/Toast';
 
-import { VERIHUB_APP_ID, VERIHUB_APP_KEY, VERIHUB_LICENCE_ID, VERIHUB_URL } from "@config/config"
+import { VERIHUB_APP_ID, VERIHUB_APP_KEY, VERIHUB_LICENCE_ID, VERIHUB_PORT_VERIHUB, VERIHUB_URL } from "@config/config"
 
 import { Button, Image, message } from "antd"
 import { Else, If, Then } from "react-if"
@@ -85,10 +85,10 @@ const FacialRecognition: React.FC<Props> = ({ onBack, onNext }) => {
             })
             .setProxyMiddleware({
                 PassiveLiveness: {
-                    url: `${VERIHUB_URL}liveness/face`
+                    url: `${VERIHUB_URL}${VERIHUB_PORT_VERIHUB}/liveness/face`
                 },
                 License: {
-                    url: `${VERIHUB_URL}${VERIHUB_LICENCE_ID}/check`
+                    url: `${VERIHUB_URL}${VERIHUB_PORT_VERIHUB}/${VERIHUB_LICENCE_ID}/check`
                 }
             })
             .setTimeout(60000)
@@ -100,6 +100,7 @@ const FacialRecognition: React.FC<Props> = ({ onBack, onNext }) => {
             ;(window as any).LivenessSDK?.onDestroy()
         }
     }, [])
+    console.log({ url: `${VERIHUB_URL}:${VERIHUB_PORT_VERIHUB}/liveness/face` })
 
     useEffect(() => {
         const livenessMessageListener = ({ data: { data, subject } }: { data: any; subject: string }) => {

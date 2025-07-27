@@ -2,6 +2,7 @@ import { GetStaticProps } from "next"
 import { serverSideTranslations } from "next-i18next/serverSideTranslations"
 
 import SignIn from "@modules/SignIn"
+import { withNonAuthClient } from "@hoc/withNonAuth"
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
     return {
@@ -11,4 +12,4 @@ export const getStaticProps: GetStaticProps = async ({ locale }) => {
     }
 }
 
-export default SignIn
+export default withNonAuthClient(SignIn)

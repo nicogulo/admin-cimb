@@ -3,7 +3,7 @@ import { useRouter } from "next/router"
 import { Button, Card, Form, Input, message, Typography } from "antd"
 
 import { LockOutlined, UserOutlined } from "@ant-design/icons"
-import { API_URL } from "@config/config"
+import { API_URL, PORT_KEYCLOCK } from "@config/config"
 import styled from "@emotion/styled"
 import useAdminLog from "@hooks/useAdminLog"
 import Icons from "@icons/icon"
@@ -11,6 +11,7 @@ import CompanyLogo from "@icons/Images/CompanyLogo"
 import { setAuth } from "@utils/auth"
 import Image from "next/image"
 import { useTheme } from "next-themes"
+import { useLogin } from "@hooks/useAuth"
 
 const { Title, Text } = Typography
 
@@ -166,48 +167,68 @@ const SignIn: React.FC = () => {
     const router = useRouter()
     const { addLog } = useAdminLog()
     const { theme } = useTheme()
+    const { login } = useLogin()
     const isDarkMode = theme === "dark"
 
     const onFinish = async (values: any) => {
         setLoading(true)
         try {
-            const response = await fetch(`${API_URL}/auth/sign-in`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(values)
+            const res = await login({
+                email: values.email,
+                password: values.password
             })
 
-            const res = await response.json()
-            if (!res) {
-                throw new Error("Oops! Something went wrong. Please try again later")
-            }
+            // const response = await fetch(
+            //     `${API_URL}${PORT_KEYCLOCK}/realms/face-repository/protocol/openid-connect/token`,
+            //     {
+            //         method: "POST",
+            //         headers: {
+            //             "Content-Type": "application/x-www-form-urlencoded"
+            //         },
 
-            if (res?.token) {
-                localStorage.setItem(
-                    "admin",
-                    JSON.stringify({
-                        id: res.id,
-                        name: res.name,
-                        email: res.email,
-                        status: res.status
-                    })
-                )
+            //         body: new URLSearchParams({
+            //             client_id: "face-backend",
+            //             username: values.email,
+            //             password: values.password,
+            //             grant_type: "password",
+            //             client_secret: "IRyPpcinGoi6pARHgNgjregZjFgCbD1m"
+            //         }).toString()
+            //     }
+            // )
 
-                setAuth(res.token)
+            // const res = await response.json()
+            // console.log("Response:", res)
+            // if (!res) {
+            //     throw new Error("Oops! Something went wrong. Please try again later")
+            // }
 
-                // Log the sign-in activity
-                await addLog("User signed in", null, {
-                    email: values.email,
-                    timestamp: new Date().toISOString()
-                })
+            // if (res?.access_token) {
+            //     // localStorage.setItem(
+            //     //     "admin",
+            //     //     JSON.stringify({
+            //     //         id: res.id,
+            //     //         name: res.name,
+            //     //         email: res.email,
+            //     //         status: res.status
+            //     //     })
+            //     // )
 
-                message.success("Sign in successful!")
-                router.push("/")
-            } else {
-                throw new Error(res?.message || "Sign in failed")
-            }
+            //     setAuth({
+            //         token: res.access_token,
+            //         expired: res.expires_in
+            //     })
+
+            //     // Log the sign-in activity
+            //     // await addLog("User signed in", null, {
+            //     //     email: values.email,
+            //     //     timestamp: new Date().toISOString()
+            //     // })
+
+            //     message.success("Sign in successful!")
+            //     router.push("/")
+            // } else {
+            //     throw new Error(res?.message || "Sign in failed")
+            // }
         } catch (error: any) {
             message.error(error.message || "Sign in failed. Please try again.")
         } finally {
@@ -233,7 +254,6 @@ const SignIn: React.FC = () => {
             <FormSection>
                 <LoginCard>
                     <LogoContainer>
-                        {/* <Icons icon={<CompanyLogo />} width={60} height={60} /> */}
                         <Image
                             src={isDarkMode ? "/images/logo-dark.png" : "/images/logo-light.png"}
                             alt="Company Logo"
@@ -263,7 +283,7 @@ const SignIn: React.FC = () => {
                             rules={[
                                 {
                                     required: true,
-                                    type: "email",
+                                    type: "string",
                                     message: "Please enter a valid email!"
                                 }
                             ]}

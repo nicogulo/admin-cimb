@@ -6,8 +6,8 @@ export const channelOptions = [
 
 export const statusOptions = [
     { label: "All", value: undefined },
-    { value: "Success", label: "Success" },
-    { value: "Failed", label: "Failed" }
+    { value: "SUCCESS", label: "Success" },
+    { value: "FAILED", label: "Failed" }
 ]
 
 export const dateOptions = [

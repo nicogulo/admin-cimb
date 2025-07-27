@@ -6,11 +6,12 @@ import React, { useState } from "react"
 
 import dynamic from "next/dynamic"
 import { imgaePlaceHolder } from "const/image-place-holder"
+import { When } from "react-if"
 
 const ReactJson = dynamic(() => import("react-json-view"), { ssr: false })
 
 interface TransactionDetailProps {
-    data: any
+    data: TransactionData
     cif: string
 }
 
@@ -26,43 +27,49 @@ const TransactionDetail: React.FC<TransactionDetailProps> = ({ data }) => {
         setOpen(false)
     }
 
+    const parsed = JSON.parse(JSON.parse(data?.zoloz_result_log))
+
     return (
         <>
             <Button icon={<MenuUnfoldOutlined />} onClick={showDrawer} size="small" />
 
-            <Drawer title={t("transaction_details")} placement="right" onClose={onClose} open={open} width="50%">
+            <Drawer title={t("transaction_details")} placement="right" onClose={onClose} open={open} width="70%">
                 <Flex vertical gap={16}>
                     <Flex gap={16}>
-                        <Card
-                            title={t("base_face_photo")}
-                            style={{
-                                width: "100%",
-                                marginTop: 16,
-                                textAlign: "center"
-                            }}
-                        >
-                            <Image
-                                src={data.base_face}
-                                alt="Base Face"
-                                style={{ maxWidth: "100%", height: "auto" }}
-                                fallback={imgaePlaceHolder}
-                            />
-                        </Card>
-                        <Card
-                            title={t("face_compare_logs")}
-                            style={{
-                                width: "100%",
-                                marginTop: 16,
-                                textAlign: "center"
-                            }}
-                        >
-                            <Image
-                                src={data.current_face}
-                                alt="Compare Face"
-                                style={{ maxWidth: "100%", height: "auto" }}
-                                fallback={imgaePlaceHolder}
-                            />
-                        </Card>
+                        <When condition={parsed?.image1_base64}>
+                            <Card
+                                title={t("base_face_photo")}
+                                style={{
+                                    width: "100%",
+                                    marginTop: 16,
+                                    textAlign: "center"
+                                }}
+                            >
+                                <Image
+                                    src={parsed?.image1_base64}
+                                    alt="Base Face"
+                                    style={{ maxWidth: "100%", height: "auto" }}
+                                    fallback={imgaePlaceHolder}
+                                />
+                            </Card>
+                        </When>
+                        <When condition={parsed?.image2_base64}>
+                            <Card
+                                title={t("face_compare_logs")}
+                                style={{
+                                    width: "100%",
+                                    marginTop: 16,
+                                    textAlign: "center"
+                                }}
+                            >
+                                <Image
+                                    src={parsed?.image2_base64}
+                                    alt="Compare Face"
+                                    style={{ maxWidth: "100%", height: "auto" }}
+                                    fallback={imgaePlaceHolder}
+                                />
+                            </Card>
+                        </When>
                     </Flex>
                     <Card
                         style={{
@@ -77,8 +84,8 @@ const TransactionDetail: React.FC<TransactionDetailProps> = ({ data }) => {
                             columns={[
                                 {
                                     title: t("transaction_id"),
-                                    dataIndex: "trx_id",
-                                    key: "trx_id"
+                                    dataIndex: "id",
+                                    key: "id"
                                 },
                                 {
                                     title: t("zoloz_trx_id"),
@@ -93,8 +100,8 @@ const TransactionDetail: React.FC<TransactionDetailProps> = ({ data }) => {
                                 },
                                 {
                                     title: t("cif"),
-                                    dataIndex: "user_id",
-                                    key: "user_id"
+                                    dataIndex: "cif",
+                                    key: "cif"
                                 },
                                 {
                                     title: t("channel"),
@@ -127,7 +134,7 @@ const TransactionDetail: React.FC<TransactionDetailProps> = ({ data }) => {
                         }}
                     >
                         <ReactJson
-                            src={data.zoloz_result_log}
+                            src={parsed ? parsed : {}}
                             name={false}
                             enableClipboard
                             collapsed={2}

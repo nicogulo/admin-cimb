@@ -13,19 +13,25 @@ const tokenKey = isDevelopment ? "dev_auth_token_admin" : "auth_token_admin"
 export const getAuth = (options?: OptionsType) => {
     const authHash = getCookie(hashKey, options) ?? undefined
     const authToken = getCookie(tokenKey, options) ?? undefined
+    const authExpired = getCookie("auth_expired_admin", options)
 
     const checkAuth = Boolean((authHash && authToken) || authToken)
 
     return {
         token: checkAuth ? authToken : undefined,
         hash: authHash || undefined,
-        isLoggedIn: checkAuth || false
+        isLoggedIn: checkAuth || false,
+        expired: authExpired ? parseFloat(authExpired) : undefined
     }
 }
 
-export const setAuth = ({ hash, token }: Auth) => {
+export const setAuth = ({ hash, token, expired }: Auth) => {
     if (hash) setCookie(hashKey, hash)
     if (token) setCookie(tokenKey, token)
+
+    if (expired) {
+        setCookie("auth_expired_admin", expired)
+    }
 
     return true
 }
@@ -37,6 +43,7 @@ if (isBrowser && isDevelopment) {
 export const resetAuth = () => {
     removeCookie(hashKey)
     removeCookie(tokenKey)
+    removeCookie("auth_expired_admin")
 
     return true
 }
