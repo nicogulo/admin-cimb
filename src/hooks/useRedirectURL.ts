@@ -1,7 +1,6 @@
 import { useEffect } from "react"
 import { useRouter } from "next/router"
 
-import { APP_DOMAIN } from "@config/config"
 import { sanitizeUrl } from "@utils/url"
 
 const isValidDomain = (hostname: string, domain: string) => hostname === domain || hostname.endsWith(`.${domain}`)
@@ -19,7 +18,7 @@ const isWhitelistedUrl = (url: string, whitelistDomains: string[]) => {
 }
 
 const getWhitelistDomains = (hostname: string) => {
-    const domains = [APP_DOMAIN]
+    const domains = ["poccimb.com"]
     if (hostname === "localhost") domains.push("localhost")
     return domains
 }
