@@ -6,7 +6,7 @@ import TransactionDetail from "./Components/TransactionDetail"
 import { channelOptions, dateOptions, statusOptions } from "const/optionsFilter"
 import { formatDate } from "@utils/date"
 import { ExportOutlined } from "@ant-design/icons"
-import { API_URL, PORT_API } from "@config/config"
+import { API_URL } from "@config/config"
 import useAuth from "@hooks/useAuth"
 import dayjs from "dayjs"
 
@@ -54,7 +54,7 @@ const Transaction = () => {
             }
 
             const res = await fetch(
-                `${API_URL}${PORT_API}/api/v1/face/transaction_list?${searchCif ? `cif=${searchCif}&` : ""}${dateFilterParam ? `${dateFilterParam}&` : ""}${channel ? `channel=${channel}&` : ""}${status ? `status=${status}&` : ""}limit=${limit}&page=${page}`,
+                `${API_URL}/api/v1/face/transaction_list?${searchCif ? `cif=${searchCif}&` : ""}${dateFilterParam ? `${dateFilterParam}&` : ""}${channel ? `channel=${channel}&` : ""}${status ? `status=${status}&` : ""}limit=${limit}&page=${page}`,
                 {
                     method: "GET",
                     headers: {

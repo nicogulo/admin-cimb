@@ -3,7 +3,7 @@ import { useRouter } from "next/router"
 import { Button, Card, Form, Input, message, Typography } from "antd"
 
 import { LockOutlined, UserOutlined } from "@ant-design/icons"
-import { API_URL, PORT_KEYCLOCK } from "@config/config"
+import { API_URL } from "@config/config"
 import styled from "@emotion/styled"
 import useAdminLog from "@hooks/useAdminLog"
 import Icons from "@icons/icon"

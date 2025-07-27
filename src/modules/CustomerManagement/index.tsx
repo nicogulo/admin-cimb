@@ -21,7 +21,7 @@ import { useTranslation } from "next-i18next"
 import { useRouter } from "next/router"
 import React, { useEffect, useState } from "react"
 import CustomerDetail from "./Components/CustomerDetail"
-import { API_URL, PORT_API } from "@config/config"
+import { API_URL } from "@config/config"
 
 const { RangePicker } = DatePicker
 
@@ -58,7 +58,7 @@ const Dashboard: React.FC = () => {
 
     const getData = async ({ limit, page }: { limit: number; page: number }) => {
         try {
-            const res = await fetch(`${API_URL}${PORT_API}/api/v1/face/customer_list?limit=${limit}&page=${page}`, {
+            const res = await fetch(`${API_URL}/api/v1/face/customer_list?limit=${limit}&page=${page}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",

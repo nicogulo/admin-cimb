@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react"
 
 import dynamic from "next/dynamic"
 import { imgaePlaceHolder } from "const/image-place-holder"
-import { API_URL, PORT_API } from "@config/config"
+import { API_URL } from "@config/config"
 import useAuth from "@hooks/useAuth"
 
 const ReactJson = dynamic(() => import("react-json-view"), { ssr: false })
@@ -33,7 +33,7 @@ const CustomerDetail: React.FC<CustomerDetailProps> = ({ cif, data }) => {
 
     const getImage = async () => {
         try {
-            const response = await fetch(`${API_URL}${PORT_API}/api/v1/face/base/${cif}?include_image=true`, {
+            const response = await fetch(`${API_URL}/api/v1/face/base/${cif}?include_image=true`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -52,7 +52,7 @@ const CustomerDetail: React.FC<CustomerDetailProps> = ({ cif, data }) => {
 
     const getTransactions = async () => {
         try {
-            const response = await fetch(`${API_URL}${PORT_API}/api/v1/face/transaction_list?cif=${cif}`, {
+            const response = await fetch(`${API_URL}/api/v1/face/transaction_list?cif=${cif}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
