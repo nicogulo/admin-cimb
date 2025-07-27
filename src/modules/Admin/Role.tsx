@@ -3,6 +3,7 @@ import { Table } from "antd"
 import { useTranslation } from "next-i18next"
 import React from "react"
 import AddRole from "./Components/AddRole"
+import EditRole from "./Components/EditRole"
 
 const dataDummy = [
     {
@@ -34,7 +35,8 @@ const Role = () => {
         {
             title: "•••",
             key: "actions",
-            render: () => <span>{t("role.edit")}</span>
+            align: "center" as const,
+            render: (_: any, record: any) => <EditRole data={record} />
         }
     ]
     return (
