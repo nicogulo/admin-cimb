@@ -5,8 +5,7 @@ import { COOKIE_DOMAIN, COOKIE_PREFIX } from "@config/config"
 
 let defaultOptions: OptionsType = {
     path: "/",
-    maxAge: 86400,
-    secure: false
+    maxAge: 86400
 }
 
 if (COOKIE_DOMAIN) {

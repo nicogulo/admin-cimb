@@ -3,11 +3,6 @@ import { Button, Form, Input, message, Result, Select } from "antd"
 import { Else, If, Then } from "react-if"
 
 import LayoutDashboard from "@components/Layouts"
-// import useUpload from '@/hooks/useUpload';
-// import Button from '@/components/Button';
-// import Icons from '@/components/Icon';
-// import { Else, If, Then } from '@/components/If';
-// import { toast } from '@/components/Toast';
 import { API_URL, VERIHUB_APP_ID, VERIHUB_APP_KEY, VERIHUB_LICENCE_ID, VERIHUB_URL } from "@config/config"
 import useAuth from "@hooks/useAuth"
 import Builder from "@verihubs/liveness"
@@ -16,16 +11,6 @@ interface Props {
     onBack: () => void
     onNext: () => void
 }
-
-// Registration
-// Forget Password
-// Change Pin
-// Feature Activation
-// Limit Increase
-// Download E-Statement
-// Change Email
-// Request Card
-// Change Debit Card
 
 const actiionOptions = [
     {
@@ -81,7 +66,7 @@ const channelOptions = [
     }
 ]
 
-const FacialRecognition: React.FC<Props> = ({ onBack, onNext }) => {
+const FacialRecognition: React.FC<Props> = ({ onNext }) => {
     const [form] = Form.useForm()
     const [image, setImage] = useState<string | null>(null)
     const [isSuccess, setIsSuccess] = useState(false)
@@ -214,11 +199,6 @@ const FacialRecognition: React.FC<Props> = ({ onBack, onNext }) => {
             }, 100)
         }
     }, [])
-
-    // const handleBack = () => {
-    //     ;(window as any).LivenessSDK?.onDestroy()
-    //     onBack()
-    // }
 
     return (
         <LayoutDashboard title="Facial Recognition">

@@ -7,6 +7,7 @@ import { imgaePlaceHolder } from "const/image-place-holder"
 import { MenuUnfoldOutlined } from "@ant-design/icons"
 import { API_URL } from "@config/config"
 import useAuth from "@hooks/useAuth"
+import { formatDate } from "@utils/date"
 
 const ReactJson = dynamic(() => import("react-json-view"), { ssr: false })
 
@@ -192,8 +193,9 @@ const CustomerDetail: React.FC<CustomerDetailProps> = ({ cif }) => {
                                 },
                                 {
                                     title: "Date Time",
-                                    dataIndex: "dateTime",
-                                    key: "dateTime"
+                                    dataIndex: "created_at",
+                                    key: "created_at",
+                                    render: (date: string) => formatDate(date, "DD MMM YYYY HH:mm")
                                 },
                                 {
                                     title: "Status",
