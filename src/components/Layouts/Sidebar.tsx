@@ -12,8 +12,7 @@ import {
     MenuFoldOutlined,
     MenuUnfoldOutlined,
     TeamOutlined,
-    TransactionOutlined,
-    UserOutlined
+    TransactionOutlined
 } from "@ant-design/icons"
 
 const Sidebar: React.FC = () => {
@@ -58,12 +57,12 @@ const Sidebar: React.FC = () => {
                     label: <Link href="/admin/role">{t("admin_role")}</Link>
                 }
             ]
-        },
-        {
-            key: "profile",
-            icon: <UserOutlined />,
-            label: <Link href="/profile">{t("profile")}</Link>
         }
+        // {
+        //     key: "profile",
+        //     icon: <UserOutlined />,
+        //     label: <Link href="/profile">{t("profile")}</Link>
+        // }
     ]
 
     if (router.locale !== "en") {
