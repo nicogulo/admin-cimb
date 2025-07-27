@@ -10,12 +10,12 @@ import { getAuth, resetAuth, setAuth } from "@utils/auth"
 import dayjs from "dayjs"
 
 const useAuth = () => {
-    // Flag agar alert hanya muncul sekali per window expired
-    const windowExpired = React.useRef<boolean>(false)
-    // State untuk alert dan countdown (pakai useRef agar sinkron antar event)
+    const windowExpired = React.useRef(false)
     const countdownTimeout = React.useRef<NodeJS.Timeout | null>(null)
-    const countdown = React.useRef<number>(10)
-    const alertActive = React.useRef<boolean>(false)
+    const countdown = React.useRef(10)
+    const alertActive = React.useRef(false)
+    const isRefreshing = React.useRef(false)
+
     const router = useRouter()
     const { isLoggedIn, token, hash } = getAuth()
 
@@ -23,13 +23,11 @@ const useAuth = () => {
         if (typeof window === "undefined") return
 
         let idleTimeout: NodeJS.Timeout | null = null
-        let lastActivity = Date.now()
         let hasRefreshed = false
 
         const getExpired = () => {
             const auth = getAuth()
             if (auth.expired === undefined) return undefined
-            // expired sudah milisecond
             if (typeof auth.expired === "string") return parseInt(auth.expired)
             if (typeof auth.expired === "number") return auth.expired
             return undefined
@@ -38,7 +36,7 @@ const useAuth = () => {
         const checkSession = () => {
             const now = Date.now()
             const cookieExpired = getExpired()
-            // Reset flag jika window refresh belum tercapai (window expired baru)
+
             if (cookieExpired && now < cookieExpired) {
                 hasRefreshed = false
                 alertActive.current = false
@@ -47,7 +45,7 @@ const useAuth = () => {
                 if (countdownTimeout.current) clearInterval(countdownTimeout.current)
                 message.destroy("session-expired")
             }
-            // Saat menyentuh expired, munculkan alert dan countdown hanya sekali per window
+
             if (
                 cookieExpired &&
                 now >= cookieExpired &&
@@ -58,12 +56,13 @@ const useAuth = () => {
                 alertActive.current = true
                 windowExpired.current = true
                 countdown.current = 10
+
                 message.warning({
                     content: `Session expired! Auto logout in <b id='countdown-session'>${countdown.current}</b> seconds. Move mouse or press any key to stay logged in.`,
                     duration: 10,
                     key: "session-expired"
                 })
-                // Countdown update
+
                 countdownTimeout.current = setInterval(() => {
                     countdown.current--
                     const cdEl = document.getElementById("countdown-session")
@@ -73,7 +72,7 @@ const useAuth = () => {
                     }
                 }, 1000)
             }
-            // Logout hanya jika idle 10 detik setelah expired
+
             if (cookieExpired && now > cookieExpired + 10000) {
                 if (countdownTimeout.current) clearInterval(countdownTimeout.current)
                 message.destroy("session-expired")
@@ -82,6 +81,7 @@ const useAuth = () => {
                 message.error("Your session has expired. Please sign in again.")
                 hasRefreshed = false
                 alertActive.current = false
+                windowExpired.current = false
             }
         }
 
@@ -106,14 +106,14 @@ const useAuth = () => {
                             }).toString()
                         }
                     )
+
                     const res = await response.json()
                     if (res?.access_token) {
-                        // expired harus berupa timestamp (milisecond)
                         const expiredTime = (Date.now() + res.expires_in * 1000).toString()
                         setAuth({ token: res.access_token, expired: expiredTime })
+
                         message.success("Session refreshed!")
                         hasRefreshed = true
-                        // Reset alert, countdown, dan windowExpired setelah refresh
                         alertActive.current = false
                         windowExpired.current = false
                         countdown.current = 10
@@ -127,31 +127,37 @@ const useAuth = () => {
         }
 
         const onActivity = () => {
-            lastActivity = Date.now()
+            const now = Date.now()
             const cookieExpired = getExpired()
-            // Jika alert aktif dan ada aktivitas, close alert dan refresh token
+
             if (
                 cookieExpired &&
-                lastActivity > cookieExpired &&
-                lastActivity <= cookieExpired + 10000 &&
+                now > cookieExpired &&
+                now <= cookieExpired + 10000 &&
                 alertActive.current &&
-                !hasRefreshed
+                !hasRefreshed &&
+                !isRefreshing.current
             ) {
+                isRefreshing.current = true
                 if (countdownTimeout.current) clearInterval(countdownTimeout.current)
                 message.destroy("session-expired")
                 alertActive.current = false
-                refreshToken()
+
+                refreshToken().finally(() => {
+                    isRefreshing.current = false
+                })
             }
+        }
+
+        const handleVisibilityChange = () => {
+            if (!document.hidden) onActivity()
         }
 
         window.addEventListener("mousemove", onActivity)
         window.addEventListener("keydown", onActivity)
         window.addEventListener("click", onActivity)
         window.addEventListener("touchstart", onActivity)
-
-        document.addEventListener("visibilitychange", () => {
-            if (!document.hidden) onActivity()
-        })
+        document.addEventListener("visibilitychange", handleVisibilityChange)
 
         idleTimeout = setInterval(checkSession, 1000)
 
@@ -160,8 +166,9 @@ const useAuth = () => {
             window.removeEventListener("keydown", onActivity)
             window.removeEventListener("click", onActivity)
             window.removeEventListener("touchstart", onActivity)
-            document.removeEventListener("visibilitychange", () => {})
+            document.removeEventListener("visibilitychange", handleVisibilityChange)
             if (idleTimeout) clearInterval(idleTimeout)
+            if (countdownTimeout.current) clearInterval(countdownTimeout.current)
         }
     }, [])
 
@@ -174,7 +181,6 @@ const useAuth = () => {
         }
     }
 }
-
 interface LoginPayload {
     email: string
     password: string
@@ -197,22 +203,31 @@ export const useLogin = () => {
 
     const handleLogin = async (payload: LoginPayload) => {
         try {
-            const response = await fetch(
-                `${API_URL}${PORT_KEYCLOCK}/realms/face-repository/protocol/openid-connect/token`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/x-www-form-urlencoded"
-                    },
-                    body: new URLSearchParams({
-                        client_id: "face-backend",
-                        username: payload.email,
-                        password: payload.password,
-                        grant_type: "password",
-                        client_secret: "IRyPpcinGoi6pARHgNgjregZjFgCbD1m"
-                    }).toString()
-                }
-            )
+            const response = await fetch(`${API_URL}/keycloak/realms/face-repository/protocol/openid-connect/token`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: new URLSearchParams({
+                    client_id: "face-backend",
+                    username: payload.email,
+                    password: payload.password,
+                    grant_type: "password",
+                    client_secret: "IRyPpcinGoi6pARHgNgjregZjFgCbD1m"
+                }).toString()
+            })
+            // const response = await fetch("/api/auth/token", {
+            //     method: "POST",
+            //     body: new URLSearchParams({
+            //         client_id: "face-backend",
+            //         username: payload.email,
+            //         password: payload.password,
+            //         grant_type: "password",
+            //         client_secret: "IRyPpcinGoi6pARHgNgjregZjFgCbD1m"
+            //     }).toString()
+            // })
+
+            console.log("Response:", response)
 
             const res = await response.json()
             if (!res) throw new Error("Oops! Something went wrong. Please try again later")
@@ -221,6 +236,8 @@ export const useLogin = () => {
                 // expired harus berupa timestamp (milisecond)
                 const expiredTime = (Date.now() + res.expires_in * 1000).toString()
                 setAuth({ token: res.access_token, expired: expiredTime })
+                localStorage.setItem("email", payload.email)
+                localStorage.setItem("password", payload.password)
                 message.success("Sign in successful!")
                 router.push(redirect || "/")
                 return res
@@ -243,6 +260,22 @@ export const useLogin = () => {
 
     return {
         login: handleLogin
+    }
+}
+
+export const useLogout = () => {
+    const router = useRouter()
+
+    const handleLogout = (force?: boolean) => {
+        resetAuth()
+        localStorage.removeItem("email")
+        if (force) {
+            router.push("/auth/sign-in")
+        }
+    }
+
+    return {
+        logout: handleLogout
     }
 }
 
@@ -325,22 +358,6 @@ export const useLogin = () => {
 //         resendOtp: handleResendOtp
 //     }
 // }
-
-export const useLogout = () => {
-    const router = useRouter()
-
-    const handleLogout = (force?: boolean) => {
-        resetAuth()
-        localStorage.removeItem("email")
-        if (force) {
-            router.push("/auth/sign-in")
-        }
-    }
-
-    return {
-        logout: handleLogout
-    }
-}
 
 // export const useForgotPassword = () => {
 //     const handleForgotPassword = async (email: string) => {

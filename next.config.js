@@ -10,6 +10,9 @@ const nextConfig = {
     compiler: {
         emotion: true
     },
+    api: {
+        bodyParser: false
+    },
     images: {
         remotePatterns: [
             {
