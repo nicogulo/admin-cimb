@@ -1,5 +1,5 @@
 import React from "react"
-import { Button, Form, Input, Modal } from "antd"
+import { Button, Checkbox, Form, Input, Modal } from "antd"
 
 import { EditOutlined } from "@ant-design/icons"
 
@@ -39,6 +39,8 @@ const EditRole: React.FC<EditRoleProps> = ({ data }) => {
         }
     }
 
+    console.log("EditRole data:", data.role ? Object.keys(data.role).filter((key) => data.role[key]) : [])
+
     return (
         <>
             <Button icon={<EditOutlined />} size="small" onClick={handleOpenEditModal} />
@@ -56,7 +58,10 @@ const EditRole: React.FC<EditRoleProps> = ({ data }) => {
             >
                 <Form
                     form={form}
-                    initialValues={data}
+                    initialValues={{
+                        ...data,
+                        permissions: data.role ? Object.keys(data.role).filter((key) => data.role[key]) : []
+                    }}
                     labelAlign="left"
                     labelWrap
                     labelCol={{ span: 6 }}
@@ -76,6 +81,19 @@ const EditRole: React.FC<EditRoleProps> = ({ data }) => {
                         rules={[{ required: true, message: "Please input the role description!" }]}
                     >
                         <Input.TextArea placeholder="Enter role description" rows={4} />
+                    </Form.Item>
+                    <Form.Item name="permissions" label="Permissions">
+                        <Checkbox.Group
+                            defaultValue={data.role ? Object.keys(data.role).filter((key) => data.role[key]) : []}
+                            options={[
+                                { label: "View Transaction", value: "viewTransaction" },
+                                { label: "Export Transaction", value: "exportTransaction" },
+                                { label: "View User", value: "viewUser" },
+                                { label: "Export User", value: "exportUser" },
+                                { label: "View Admin", value: "viewAdmin" },
+                                { label: "Edit Admin", value: "editAdmin" }
+                            ]}
+                        />
                     </Form.Item>
                 </Form>
             </Modal>

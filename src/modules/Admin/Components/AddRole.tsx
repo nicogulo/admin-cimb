@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { Button, Form, Input, Modal } from "antd"
+import { Button, Checkbox, Form, Input, Modal } from "antd"
 
 const AddRole = () => {
     const [form] = Form.useForm()
@@ -78,6 +78,19 @@ const AddRole = () => {
                         ]}
                     >
                         <Input.TextArea placeholder="Enter Description" rows={4} />
+                    </Form.Item>
+                    <Form.Item name="permissions" label="Permissions">
+                        <Checkbox.Group
+                            options={[
+                                { label: "View Transaction", value: "viewTransaction" },
+                                { label: "Export Transaction", value: "exportTransaction" },
+                                { label: "View User", value: "viewUser" },
+                                { label: "Export User", value: "exportUser" },
+                                { label: "View Admin", value: "viewAdmin" },
+                                { label: "Edit Admin", value: "editAdmin" }
+                            ]}
+                            defaultValue={[]}
+                        />
                     </Form.Item>
                 </Form>
             </Modal>

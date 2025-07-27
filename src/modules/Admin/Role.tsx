@@ -10,12 +10,41 @@ const dataDummy = [
     {
         id: "1",
         name: "Super Admin",
-        description: "Full access to all features"
+        description: "Full access to all features",
+        role: {
+            viewTransaction: true,
+            exportTransaction: true,
+            viewUser: true,
+            exportUser: true,
+            viewAdmin: true,
+            editAdmin: true
+        }
     },
     {
         id: "2",
-        name: "Admin",
-        description: "Limited access to admin features"
+        name: "General",
+        description: "Can view transactions and users, but cannot edit admin",
+        role: {
+            viewTransaction: true,
+            exportTransaction: false,
+            viewUser: true,
+            exportUser: false,
+            viewAdmin: false,
+            editAdmin: false
+        }
+    },
+    {
+        id: "3",
+        name: "Analyst",
+        description: "Can view transactions and users",
+        role: {
+            viewTransaction: true,
+            exportTransaction: true,
+            viewUser: true,
+            exportUser: true,
+            viewAdmin: false,
+            editAdmin: false
+        }
     }
 ]
 
