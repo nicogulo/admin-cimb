@@ -203,32 +203,32 @@ export const useLogin = () => {
 
     const handleLogin = async (payload: LoginPayload) => {
         try {
-            const response = await fetch(
-                `http://147.139.200.6/keycloak/realms/face-repository/protocol/openid-connect/token`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/x-www-form-urlencoded"
-                    },
-                    body: new URLSearchParams({
-                        client_id: "face-backend",
-                        username: payload.email,
-                        password: payload.password,
-                        grant_type: "password",
-                        client_secret: "IRyPpcinGoi6pARHgNgjregZjFgCbD1m"
-                    }).toString()
-                }
-            )
-            // const response = await fetch("/api/auth/token", {
-            //     method: "POST",
-            //     body: new URLSearchParams({
-            //         client_id: "face-backend",
-            //         username: payload.email,
-            //         password: payload.password,
-            //         grant_type: "password",
-            //         client_secret: "IRyPpcinGoi6pARHgNgjregZjFgCbD1m"
-            //     }).toString()
-            // })
+            // const response = await fetch(
+            //     `http://147.139.200.6/keycloak/realms/face-repository/protocol/openid-connect/token`,
+            //     {
+            //         method: "POST",
+            //         headers: {
+            //             "Content-Type": "application/x-www-form-urlencoded"
+            //         },
+            //         body: new URLSearchParams({
+            //             client_id: "face-backend",
+            //             username: payload.email,
+            //             password: payload.password,
+            //             grant_type: "password",
+            //             client_secret: "IRyPpcinGoi6pARHgNgjregZjFgCbD1m"
+            //         }).toString()
+            //     }
+            // )
+            const response = await fetch("/api/auth/token", {
+                method: "POST",
+                body: new URLSearchParams({
+                    client_id: "face-backend",
+                    username: payload.email,
+                    password: payload.password,
+                    grant_type: "password",
+                    client_secret: "IRyPpcinGoi6pARHgNgjregZjFgCbD1m"
+                }).toString()
+            })
 
             console.log("Response:", response)
 
