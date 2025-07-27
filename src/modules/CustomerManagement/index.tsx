@@ -70,7 +70,7 @@ const Dashboard: React.FC = () => {
             }
 
             const res = await fetch(
-                `${API_URL}/api/v1/face/customer_list?${searchCif ? `cif=${searchCif}&` : ""}${dateFilterParam ? `${dateFilterParam}&` : ""}${channel ? `channel=${channel}&` : ""}${status ? `status=${status}&` : ""}limit=${limit}&page=${page}`,
+                `${API_URL}/api/v1/face/customer_list?${searchCif ? `cif=${searchCif}&` : ""}${dateFilterParam ? `${dateFilterParam}&` : ""}${channel ? `channel=${channel}&` : ""}${status ? `status=${status}&` : ""}&page=${page}`,
                 {
                     method: "GET",
                     headers: {

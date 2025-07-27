@@ -57,7 +57,7 @@ const Transaction = () => {
             }
 
             const res = await fetch(
-                `${API_URL}/api/v1/face/transaction_list?${searchCif ? `cif=${searchCif}&` : ""}${dateFilterParam ? `${dateFilterParam}&` : ""}${channel ? `channel=${channel}&` : ""}${status ? `status=${status}&` : ""}limit=${limit}&page=${page}`,
+                `${API_URL}/api/v1/face/transaction_list?${searchCif ? `cif=${searchCif}&` : ""}${dateFilterParam ? `${dateFilterParam}&` : ""}${channel ? `channel=${channel}&` : ""}${status ? `status=${status}&` : ""}&page=${page}`,
                 {
                     method: "GET",
                     headers: {
@@ -82,7 +82,7 @@ const Transaction = () => {
             setPagination({
                 current: page,
                 pageSize: limit,
-                total: data?.total || 0
+                total: data?.total_count || 0
             })
         } catch (error) {
             message.error("Error fetching transaction data")
