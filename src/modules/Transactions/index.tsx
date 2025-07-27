@@ -73,7 +73,7 @@ const Transaction = () => {
                 channel: item.channel,
                 date_time: item.date_time,
                 action: item.action,
-                status: item.status ? "Success" : "Failed",
+                status: item.status,
                 zoloz_trx_id: item.zoloz_trx_id,
                 zoloz_result_log: JSON.stringify(item.zoloz_result_log, null, 2),
                 created_at: item.created_at

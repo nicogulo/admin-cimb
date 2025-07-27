@@ -225,7 +225,7 @@ const CustomerDetail: React.FC<CustomerDetailProps> = ({ cif }) => {
                         />
                     </Card>
 
-                    <Card
+                    {/* <Card
                         title={t("zoloz_result_log")}
                         style={{
                             width: "100%",
@@ -253,7 +253,7 @@ const CustomerDetail: React.FC<CustomerDetailProps> = ({ cif }) => {
                                 />
                             )
                         })}
-                    </Card>
+                    </Card> */}
                 </Flex>
             </Drawer>
         </>

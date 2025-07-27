@@ -206,7 +206,7 @@ const Dashboard: React.FC = () => {
             )
         },
         {
-            title: t("status"),
+            title: "Last Transaction Status",
             dataIndex: "last_transaction_status",
             key: "last_transaction_status",
             align: "center" as const,
